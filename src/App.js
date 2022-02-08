@@ -4,13 +4,133 @@ import React, { Component } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import './App.css';
-//import * as d3 from 'd3';
+import * as d3 from 'd3';
 //import ScriptTag from 'react-script-tag/lib/ScriptTag';
 //import ScriptTag from 'react-script-tag';
-//import {Helmet} from "react-helmet";
+import {Helmet} from "react-helmet";
 
 
 function App() {
+
+  //BAR GRAPH
+
+  data = [
+    { name: '@kpoterek', score: 0 },
+    { name: '@andrewmiller', score: 75 },
+    { name: '@ezenuni', score: 50 },
+    { name: '@jjchan', score: 25 },
+    { name: '@rbrinker', score: 10 },
+    { name: '@profz', score: 75 },
+    { name: '@stafford', score: 9 },
+  ];
+  
+  var width = 900;
+  var height = 450;
+  var margin = { top: 50, bottom: 50, left: 1, right: 1};
+  
+  var svg = d3.select('#d3-container')
+    .append('svg')
+    .attr('width', width - margin.left - margin.right)
+    .attr('height', height - margin.top - margin.bottom)
+    .attr("viewBox", [0, 0, width, height]);
+  
+  const x = d3.scaleBand()
+    .domain(d3.range(data.length))
+    .range([margin.left, width - margin.right])
+    .padding(0.1)
+  
+  const y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([height - margin.bottom, margin.top])
+  
+  svg
+    .append("g")
+    .attr("fill", 'red')
+    .selectAll("rect")
+    .data(data.sort((a, b) => d3.descending(a.score, b.score)))
+    .join("rect")
+      .attr("x", (d, i) => x(i))
+      .attr("y", d => y(d.score))
+      .attr('title', (d) => d.score)
+      .attr("class", "rect")
+      .attr("height", d => y(0) - y(d.score))
+      .attr("width", x.bandwidth());
+  
+  function yAxis(g) {
+    g.attr("transform", `translate(${margin.left}, 0)`)
+      .call(d3.axisLeft(y).ticks(null, data.format))
+      .attr("font-size", '20px')
+  }
+  
+  function xAxis(g) {
+    g.attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x).tickFormat(i => data[i].name))
+      .attr("font-size", '20px')
+  }
+  
+  svg.append("g").call(xAxis);
+  svg.append("g").call(yAxis);
+  svg.node();/**/
+
+
+  //PIE CHART
+
+  // Step 3
+  var svg = d3.select("svg");
+  var width = 500;
+  var height = 400;
+  var radius = 200;
+
+  // Step 1        
+  var data = [{name: "Gun", share: 75}, 
+            {name: "No Gun", share: 25}];
+
+  var g = svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+  // Step 4
+  var ordScale = d3.scaleOrdinal()
+                  .domain(data)
+                  .range(['blue','yellow','green','red','pink']);
+
+  // Step 5
+  var pie = d3.pie().value(function(d) { 
+        return d.share; 
+    });
+
+  var arc = g.selectAll("arc")
+          .data(pie(data))
+          .enter();
+
+  // Step 6
+  var path = d3.arc()
+            .outerRadius(radius)
+            .innerRadius(0);
+
+  arc.append("path")
+  .attr("d", path)
+  .attr("fill", function(d) { return ordScale(d.data.name); });
+
+  // Step 7
+  var label = d3.arc()
+              .outerRadius(radius)
+              .innerRadius(0);
+    
+  arc.append("text")
+  .attr("transform", function(d) { 
+            return "translate(" + label.centroid(d) + ")"; 
+    })
+  .text(function(d) { return d.data.name; })
+
+  useEffect(() => {
+    /*
+      This is going to run once when the App is first rendered.
+      All of our D3 code, which will edit the elements on our DOM, will be put here.
+      
+      If you wanted to run this code in response to a certain action, such as a buttonPress event,
+      you can put in the appropriate function.
+    */
+}, [])
 
   // State
   const [todos, setTodos] = useState([]);
@@ -178,15 +298,24 @@ function App() {
       {/* GRAPH STUFF 
       <div>
       
-        <div style={{float: 'center'}}>
-          <h1>Percentage of Posts with Guns</h1>
-          <div id="d3-container" />
-          <Helmet>
-            <script type="text/javascript" src="Graph.js"></script>
-          </Helmet>
-        </div>
+        <h2>Percentage of Gun Posts for @Shooterboy</h2>
+        <svg width="500" height="400"></svg> 
+        
+        <Helmet>
+          <script type="text/javascript" src="Graph.js"></script>
+        </Helmet>
+        
        
       </div>*/}
+      <h2>Percentage of Gun Posts for @Shooterboy</h2>
+      <svg width={width} height={height}></svg> 
+
+      
+        <h1>Percentage of Posts with Guns</h1>
+        <div id="d3-container">
+          <svg></svg>
+        </div>
+     
 
     </div>
   );
