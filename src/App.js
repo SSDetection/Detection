@@ -4,6 +4,11 @@ import React, { Component } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import './App.css';
+//import * as d3 from 'd3';
+//import ScriptTag from 'react-script-tag/lib/ScriptTag';
+//import ScriptTag from 'react-script-tag';
+//import {Helmet} from "react-helmet";
+
 
 function App() {
 
@@ -169,8 +174,21 @@ function App() {
           </div>
       </div>
 
-    </div>
 
+      {/* GRAPH STUFF 
+      <div>
+      
+        <div style={{float: 'center'}}>
+          <h1>Percentage of Posts with Guns</h1>
+          <div id="d3-container" />
+          <Helmet>
+            <script type="text/javascript" src="Graph.js"></script>
+          </Helmet>
+        </div>
+       
+      </div>*/}
+
+    </div>
   );
 }
 
