@@ -15,13 +15,34 @@
 
 .App-header {
   background-color: #282c34;
+  
+  /*
   min-height: 100vh;
-  /*display: flex;
-  flex-direction: column;*/
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center;*/
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.right {
+  justify-content: end;
+}
+
+.center{
+  
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  
+}
+
+.centercontent{
+  
+  align-content: center;
+  
 }
 
 .App-link {
@@ -65,6 +86,10 @@
   color: red
 }
 
+.orange {
+  color: orange
+}
+
 .sidebyside {
   display: flex;
 }
@@ -94,5 +119,45 @@
   padding: 2%;
   font-size: calc(10px + 2vmin);;
 }
+
+.sidebar {
+  min-width: 20%;
+  background-color: gray;
+  padding: 1%;
+}
+
+.display {
+  min-width: 80%;
+  background-color: lightgrey;
+}
+
+.redback {
+  background-color: gray;
+}
+
+.font10 {
+  font-size: 10px;
+}
+
+.result {
+  width:25%;
+  max-height: 25%;
+  background-color: gray;
+  margin: 0.5%;
+
+}
+
+.comment {
+  font-style: italic;
+  text-align: center;
+
+}
+
+.analysis {
+  text-align: center;
+
+}
+
+
 
 
