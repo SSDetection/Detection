@@ -12,6 +12,20 @@ import {Helmet} from "react-helmet";
 
 function App() {
 
+  //SERVER STUFF
+  const [servData,setData] = useState([{}])
+
+  useEffect(() => {
+    fetch("/members").then(
+      res => res.json()
+    ).then(
+      servData => {
+        setData(servData)
+        console.log(servData)
+      }
+    )
+  },[])
+
   //BAR GRAPH
 
   data = [
@@ -411,25 +425,19 @@ function App() {
           </div>
       </div>
 
-
-      {/* GRAPH STUFF 
       <div>
       
-        <h2>Percentage of Gun Posts for @Shooterboy</h2>
-        <svg width="500" height="400"></svg> 
-        
-        <Helmet>
-          <script type="text/javascript" src="Graph.js"></script>
-        </Helmet>
+      {(typeof servData.members === 'undefined') ? (
+          <p>Loading...</p>
+        ):(
+          servData.members.map((member,i) => (
+            <p key={i}>{member}</p>
+          ))
+        )}
         
        
-      </div>*/}
-     
-
-      
+      </div>
         
-     
-
     </div>
   );
 }
