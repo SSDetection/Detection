@@ -242,7 +242,7 @@ function App() {
           <div class="sidebyside">
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/65822034_350668148947846_4694153716710752181_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=3cqE4brA-0wAX9v7yJj&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MjA4NDY3MTM2NjIyMTc5ODIyNA%3D%3D.2-ccb7-4&oh=00_AT9eE7oCMDoXMbrqIjTeG2h-rI5kxykL9gC9asR_cVcQ_g&oe=621B1BCD&_nc_sid=83d603" class="center"/>
+              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/65822034_350668148947846_4694153716710752181_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=3cqE4brA-0wAX9v7yJj&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MjA4NDY3MTM2NjIyMTc5ODIyNA%3D%3D.2-ccb7-4&oh=00_AT9eE7oCMDoXMbrqIjTeG2h-rI5kxykL9gC9asR_cVcQ_g&oe=621B1BCD&_nc_sid=83d603" class="center" width="400" height="400"/>
               <p class="comment">All your base are belong to us</p>
             </div>
 
