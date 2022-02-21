@@ -2,6 +2,7 @@ import time
 import urllib.request
 import os
 import selenium.common.exceptions
+from selenium.common.exceptions import NoSuchElementException
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 
 #from selenium.webdriver.chrom.options import Options
 chrome_options = Options()
-#chrome_options.add_argument("--headless")
+chrome_options.add_argument("--headless")
 
 #PATH = "./chromedriver"
 PATH = "/Users/robertsonbrinker/Downloads/chromedriver"
@@ -48,7 +49,7 @@ def download_profile():
 
     while True:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(5)
+        time.sleep(10)
         current_height = driver.execute_script("return document.body.scrollHeight")
         links = driver.find_elements(By.TAG_NAME, "a")
         for link in links:
@@ -60,38 +61,48 @@ def download_profile():
         previous_height = current_height
 
     posts = list(set(posts))
-    with open(profileName + "Posts" + '.txt', "w") as output:
-        output.write(str(posts))
+    #with open(profileName + "Posts" + '.txt', "w") as output:
+    #    output.write(str(posts))
 
+    #source_links = {}
     source_links = []
     i=0
+    
     for post in posts:
         driver.get(post)
-        time.sleep(4)
-        if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
-            download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
-            source_links.append(download_url)
-            #source_links[i]=download_url
-        i=i+1
+        time.sleep(10)
+        try:
+            ele = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']")
+        except NoSuchElementException:
+           pass
+        try:
+            if ele is not None:
+                download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
+                source_links.append(download_url)
+                #source_links[i]=download_url
+                i=i+1
+        except NoSuchElementException:
+                pass
+            
+            
     return source_links
-    #return source_links
 
-from flask import Flask
+from flask import Flask, jsonify
 app = Flask(__name__)
 
 # Mebers API Route
-print("### About to Run it ###")
+print("### Running ###")
 results = download_profile()
 print("### Finished ###")
 print("###",results,"###")
 
 @app.route("/scrapperResults")
 def scrapperResults():
-    return {results}
+    return jsonify({'results': results})
 
-#@app.route("/members")
-#def members():
-#    return {"members": ["Member1","Member2","Member3"]}
+@app.route("/members")
+def members():
+    return {"members": ["Member1","Member2","Member3"]}
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -15,7 +15,7 @@ function App() {
   //SERVER STUFF
   const [servData,setData] = useState([{}])
 
-  useEffect(() => {
+  /*useEffect(() => {
     fetch("/members").then(
       res => res.json()
     ).then(
@@ -24,7 +24,21 @@ function App() {
         console.log(servData)
       }
     )
+  },[])*/
+
+  useEffect(() => {
+    fetch("/scrapperResults").then(
+      res => res.json()
+    ).then(
+      servData => {
+        setData(servData)
+        console.log(servData)
+      }
+    )
   },[])
+
+  console.log("servData",servData.results)
+  var pic = "https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/37857780_671801903168144_2183731892077985792_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=OA9SgZiiqUMAX-xgCOH&tn=XWaIxGnaRJOZZYYQ&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgzMDE3NDY5MDc4NDUxMjg4NA%3D%3D.2-ccb7-4&oh=00_AT9N_A82hAjIhvnG8bVKnVIag3dbYpJ2UJ_By1rmevR_WA&oe=621AE7F7&_nc_sid=83d603"
 
   //BAR GRAPH
 
@@ -228,19 +242,19 @@ function App() {
           <div class="sidebyside">
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://picsum.photos/100/100/?random" class="center"/>
+              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/65822034_350668148947846_4694153716710752181_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=3cqE4brA-0wAX9v7yJj&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MjA4NDY3MTM2NjIyMTc5ODIyNA%3D%3D.2-ccb7-4&oh=00_AT9eE7oCMDoXMbrqIjTeG2h-rI5kxykL9gC9asR_cVcQ_g&oe=621B1BCD&_nc_sid=83d603" class="center"/>
               <p class="comment">All your base are belong to us</p>
             </div>
 
             <div class="result centercontent">
               <p class="analysis"><span class="red">language</span></p>
-              <img src="https://picsum.photos/100/99/?random" class="center"/>
+              <img src={pic} class="center"/>
               <p class="comment">spoiler alert thanos <span class="red">dies</span></p>
             </div>
 
             <div class="result centercontent">
               <p class="analysis"><span class="red">gun</span></p>
-              <img src="https://picsum.photos/100/101/?random" class="center"/>
+              <img src="https://www.instagram.com/p/CBqFrrCHVM7/media/?size=t" class="center" alt="Broken !"></img>
               <p class="comment">at the range</p>
             </div>
 
@@ -430,8 +444,21 @@ function App() {
       {(typeof servData.members === 'undefined') ? (
           <p>Loading...</p>
         ):(
-          servData.members.map((member,i) => (
-            <p key={i}>{member}</p>
+          servData.members.map((members,i) => (
+            <p key={i}>{members}</p>
+          ))
+        )}
+        
+       
+      </div>
+
+      <div>
+      
+      {(typeof servData.results === 'undefined') ? (
+          <p>Loading...</p>
+        ):(
+          servData.results.map((results,i) => (
+            <p key={i}>{results}</p>
           ))
         )}
         
