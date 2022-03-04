@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask import request
 import time
 import urllib.request
 import os
@@ -113,11 +114,16 @@ print("###", "###")
 def scrapperResults():
     return jsonify({'results': results})
 
-
-@app.route("/requests")
+results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
+@app.route("/requests", methods = ['GET','POST'])
 def requests():
-    return { 1: { "Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, 2:{ "Path": "zz/y/z", "Caption":"dog", "Date": "2/34/2022"}, 3:{ "Path": "zz/ysdf/z", "Caption":"dosdfg", "Date": "2/34/20222"}}
+    data = request.json
+    print(data)
+    username = data
+    print(username)
+    return username
 
+ #{1: { "path": "x/y/z", "caption":"kill", "date": "12/2/2022"}, 2:{ "path": "zz/y/z", "caption":"dog", "date": "2/34/2022"}, 3:{ "path": "zz/ysdf/z", "caption":"dosdfg", "date": "2/34/20222"}}
 
 if __name__ == "__main__":
     app.run(debug=True)
