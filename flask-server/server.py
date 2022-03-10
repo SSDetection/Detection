@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-
+import json
 # from selenium.webdriver.chrom.options import Options
 
 
@@ -117,11 +117,25 @@ def scrapperResults():
 results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
 @app.route("/requests", methods = ['GET','POST'])
 def requests():
-    data = request.json
+    data = request.get_json()
+    print(type(data))
     print(data)
-    username = data
-    print(username)
-    return username
+    data['username1'] = 'endrit'
+    print(data)
+    print(data.get("username"))
+    return data
+
+@app.route("/posts", methods = ['GET'])
+def posts():
+    data = {"posts":
+    {
+        "path": ["/picture1"],
+        "caption": ["kys"],
+        "date": ["2/2/2"]
+        }
+    }
+    return data
+
 
  #{1: { "path": "x/y/z", "caption":"kill", "date": "12/2/2022"}, 2:{ "path": "zz/y/z", "caption":"dog", "date": "2/34/2022"}, 3:{ "path": "zz/ysdf/z", "caption":"dosdfg", "date": "2/34/20222"}}
 

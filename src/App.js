@@ -14,41 +14,81 @@ import {Posts} from "./Posts.js"
 
 
 function App() {
+//   console.log(basejson)
+  
 
-  const [data, setData] = useState([{}])
-  const [username, setUsername] = useState([{}])
-  // const [path, setPath] = useState([{}])
-  // const [caption, setCaption] = useState([{}])
-  // const [date, setDate] = useState([{}])
+//   const [data, setData] = useState([{}])
+//   const [username, setUsername] = useState([{}])
+//   // const [path, setPath] = useState([{}])
+//   // const [caption, setCaption] = useState([{}])
+//   // const [date, setDate] = useState([{}])
 
-  useEffect(
-    () => {
-      fetch("/requests").then(
-        res => res.json()
-      ).then(
-        data => {
-          setData(data[1].caption)
-          // setPath(data.Path)
-          // setCaption(data.Caption)
-          // setDate(data.Date)
-          
-          // console.log(path)
-          // console.log(caption)
-          // console.log(date)
-        }
-      )
-    }, [])
-console.log(data)
+//   useEffect(
+//     () => {
+//       getData()
+//     }, [])
+// console.log(data)
+  const [username, setUsername] = useState('@username');
+  const [data, setData] = useState();
+  const [update, setUpdate] = useState(false);
+
+  let textInput = React.createRef();
+
+
+  useEffect(()=>{
+    console.log("Page Rendered")
+  },[])
+
+  useEffect(()=> {
+    let didCancel = false;
+
+    async function fetchUser() {
+      if (!didCancel) {
+        let response = await fetch('/posts')
+        let userPosts = await response.json()
+        setData(userPosts)
+        console.log(data)
+      }
+    }
+    fetchUser();
+    return () => {
+      didCancel = true;
+    }
+  }, [update]);
+  
+  function callBoth(){
+    setUpdate((prevState)=> !prevState);
+    setUsername(textInput.current.value)
+  }
 
   return (
-    <div>
-        <Container>
+    // <div>
+    //     <Container>
           
-          <Requests onNewUser = {user => setUsername(user)}/>
-          </Container>
+    //       <Requests onNewUser = {user => setUsername(user)}/>
+    //       <Posts data = {data}/>
+    //       </Container>
+    //       <div className="App">
+    //  {
+    //    basejson && basejson.length>0 && basejson.map((item)=><p>{item.path}</p>)
+    //  }
+    // </div>
+    // </div >
+    <div className="App">
+      {data && (
+        <>
+        <h1>{data.posts.caption[0]}</h1>
+        <p>{username}</p>
+        </>
+      )}
+      <input ref={textInput} type='text' placeholder={username}></input>
+      <button onClick={() => {
+        callBoth()
+      }}>
+        Click this
+      </button>
+    </div>
 
-
-    </div >
 
   );
 }
