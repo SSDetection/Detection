@@ -60,32 +60,32 @@ def download_profile():
         output.write(str(posts))
 
     image_count = 0
-    dict_count = 0
-    profileData = {}
+    profileDict = {}
+    dataList = []
     for post in posts:
         driver.get(post)
         time.sleep(4)
-        profileData[dict_count] = {}
+        profileData = {}
         if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
             download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
             save_as = os.path.join(path, profileName + str(image_count) + '.jpg')
             wget.download(download_url, save_as)
-            profileData[dict_count]["Image"] = download_url
+            profileData["Image"] = download_url
             image_count = image_count + 1
 
         if driver.find_element(By.XPATH, "//time[@class='_1o9PC']") is not None:
             date = driver.find_element(By.XPATH, "//time[@class='_1o9PC']").text
-            profileData[dict_count]["Date"] = date
+            profileData["Date"] = date
 
         if driver.find_element(By.XPATH, ".//span[@class = '']") is not None:
             comment = driver.find_element(By.XPATH, "//div[@class='C4VMK']//span[@class='_7UhW9   xLCgt      MMzan   "
                                                     "KV-D4           se6yk       T0kll ']")
             caption = comment.text
-            profileData[dict_count]["Caption"] = caption
-
-        dict_count = dict_count + 1
-    print(profileData)
-    return profileData
+            profileData["Caption"] = caption
+        dataList.append(profileData)
+    profileDict = {"Data": dataList}
+    print(profileDict)
+    return profileDict
 
 
 download_profile()
