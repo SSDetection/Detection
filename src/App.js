@@ -34,12 +34,8 @@ function App() {
 
   let textInput = React.createRef();
 
-
-  useEffect(()=>{
-    console.log("Page Rendered")
-  },[])
-
   useEffect(()=> {
+    console.log("Page Rendered")
     let didCancel = false;
 
     async function fetchUser() {
@@ -54,11 +50,27 @@ function App() {
     return () => {
       didCancel = true;
     }
-  }, [update]);
+  }, []);
+
+  useEffect(() => {
+    // POST requ"est using fetch inside useEffect React hook
+    if (username !== "@username"){
+      console.log("this shit running")
+      const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: "endrit"})
+      };
+      fetch('/requests', requestOptions)
+          .then(response => response.json())
+          .then(data => setData(data))
+    }
+// empty dependency array means this effect will only run once (like componentDidMount in classes)
+}, [username]);
   
   function callBoth(){
-    setUpdate((prevState)=> !prevState);
     setUsername(textInput.current.value)
+    setUpdate((prevState)=> !prevState);
   }
 
   return (
