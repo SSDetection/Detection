@@ -1,6 +1,6 @@
 {
   "name": "detection",
-  "homepage": "https://ssdetection.github.io/Detection/",
+  "homepage": "https://senior-capstone-8f433.web.app/",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5000",
