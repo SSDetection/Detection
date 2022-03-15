@@ -8,10 +8,84 @@ import * as d3 from 'd3';
 //import ScriptTag from 'react-script-tag/lib/ScriptTag';
 //import ScriptTag from 'react-script-tag';
 import {Helmet} from "react-helmet";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { initializeApp } from "firebase/app";
 
 
 function App() {
 
+  
+// Set the configuration for your app
+// TODO: Replace with your app's config object
+const config = {
+  apiKey: "AIzaSyDTht3F49SARp0XE1SyjQiTLpX_7osbYh4",
+  authDomain: "senior-capstone-8f433.firebaseapp.com",
+  databaseURL: "https://senior-capstone-8f433-default-rtdb.firebaseio.com",
+  projectId: "senior-capstone-8f433",
+  storageBucket: "senior-capstone-8f433.appspot.com",
+  messagingSenderId: "978452685993",
+  appId: "1:978452685993:web:5c34b8d79f2af2210e75b8"
+  }
+const firebaseApp = initializeApp(config);
+
+// Get a reference to the storage service, which is used to create references in your storage bucket
+const storage = getStorage(firebaseApp);
+
+
+  
+//firebase.initialize_app(config)
+// Create a reference with an initial file path and name
+//const storage = getStorage();
+console.log("storage1",storage)
+const pathReference = ref(storage, '/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/volter43/volter430.jpg');
+var cloudurl = ""
+getDownloadURL(ref(storage, pathReference))
+  .then((url) => {
+    // `url` is the download URL for 'images/stars.jpg'
+
+    // This can be downloaded directly:
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.onload = (event) => {
+      const blob = xhr.response;
+    };
+    xhr.open('GET', url);
+    xhr.send();
+
+    const img = document.getElementById('myimg');
+    img.setAttribute('src', url);
+
+    console.log("url",url)
+    cloudurl=url
+    console.log("cloudURL in download",cloudurl)
+      
+    //// Or inserted into an <img> element
+    //const img = document.getElementById('myimg');
+    //img.setAttribute('src', url);
+  })
+  .catch((error) => {
+    // A full list of error codes is available at
+    // https://firebase.google.com/docs/storage/web/handle-errors
+    switch (error.code) {
+      case 'storage/object-not-found':
+        // File doesn't exist
+        break;
+      case 'storage/unauthorized':
+        // User doesn't have permission to access the object
+        break;
+      case 'storage/canceled':
+        // User canceled the upload
+        break;
+
+      // ...
+
+      case 'storage/unknown':
+        // Unknown error occurred, inspect the server response
+        break;
+      }
+  });/**/
+  console.log("cloudURL",cloudurl)
+  console.log("storage2",storage)
   //SERVER STUFF
   const [servData,setData] = useState([{}])
 
@@ -36,7 +110,7 @@ function App() {
       }
     )
   },[])
-
+  
   console.log("servData",servData.results)
   var pic = "https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/37857780_671801903168144_2183731892077985792_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=OA9SgZiiqUMAX-xgCOH&tn=XWaIxGnaRJOZZYYQ&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgzMDE3NDY5MDc4NDUxMjg4NA%3D%3D.2-ccb7-4&oh=00_AT9N_A82hAjIhvnG8bVKnVIag3dbYpJ2UJ_By1rmevR_WA&oe=621AE7F7&_nc_sid=83d603"
 
@@ -260,7 +334,7 @@ function App() {
 
             <div class="result centercontent">
               <p class="analysis"><span class="red">knife</span></p>
-              <img src="https://picsum.photos/100/102/?random" class="center"/>
+              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/36592903_475617912890786_5820267975613087744_n.jpg?stp=dst-jpg_e35&_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=102&_nc_ohc=SjiJtNrVxjYAX8oDdhv&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgyNDM5MzA3MTk4MTIxMTIwMQ%3D%3D.2-ccb7-4&oh=00_AT8znZwKcQAh0OboHHR2_KpbiQorjqC-nEzo66s_L2xVAw&oe=6230BF3B&_nc_sid=83d603" class="center"/>
               <p class="comment">my new kunai</p>
             </div>
           </div>
@@ -268,25 +342,25 @@ function App() {
           <div class="sidebyside">
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://picsum.photos/101/101/?random" class="center"/>
+              <img src="/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/volter43/volter430.jpg" class="center"/>
               <p class="comment">no u</p>
             </div>
 
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://picsum.photos/101/100/?random" class="center"/>
+              <img src="flask-server/volter43/volter430.jpg" class="center"/>
               <p class="comment">who else misses dan the train man</p>
             </div>
 
             <div class="result centercontent">
               <p class="analysis"><span class="red">language gun</span></p>
-              <img src="https://picsum.photos/101/99/?random" class="center"/>
+              <img src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/Users%2Frobertsonbrinker%2FDocuments%2FGitHub%2FDetection%2Fflask-server%2Fvolter43%2Fvolter430.jpg?alt=media&token=ac551e73-6f73-4289-b064-24897afbc9bb" class="center"/>
               <p class="comment">suns out guns out or I get <span class="red">hangry</span></p>
             </div>
 
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://picsum.photos/101/102/?random" class="center"/>
+              <img src={cloudurl} class="center"/>
               <p class="comment">nice pic huh</p>
             </div>
           </div>
@@ -294,7 +368,7 @@ function App() {
           <div class="sidebyside">
             <div class="result centercontent">
               <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://picsum.photos/99/100/?random" class="center"/>
+              <img id="myimg" class="center"/>
               <p class="comment">example</p>
             </div>
 
