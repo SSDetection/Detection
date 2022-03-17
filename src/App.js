@@ -67,25 +67,14 @@ function App() {
           .then(response => response.json())
           .then(data => setData(data))
           console.log(data)
-          renderData(data);
+          // renderData(data);
     }
-// empty dependency array means this effect will only run once (like componentDidMount in classes)
+// this username means everytime it changes this useeffect gets run
 }, [username]);
   
   function callBoth(){
     setUsername(textInput.current.value)
     setUpdate((prevState)=> !prevState);
-  }
-  function renderData(data) {
-      for (let i =0; i > data.posts.length; i++){
-        console.log(data.posts[i])
-        return (
-          <>
-          <h1>{data.posts[i].caption[i]}</h1>
-          <p>{username}</p>
-          </>
-        )
-      }
   }
 
   return (
@@ -110,8 +99,14 @@ function App() {
         // <p>{username}</p>
         // </>
         <>
+        
         <div>
-          {data.posts.map (post => <div>{post.caption[0]}</div>)}
+          <h1>{username}</h1>
+          {data.posts.map (post => <div>
+            
+            <h2>{post.caption[0]}</h2>
+            <p>{post.date[0]}</p>
+            </div>)}
         </div>
         </>
 
