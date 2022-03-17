@@ -123,23 +123,28 @@ def requests():
     data['username1'] = 'endrit'
     print(data)
     print(data.get("username"))
-    data = {"posts":
+    data = {"posts":[
     {
         "path": ["/picture2"],
         "caption": ["neckit"],
         "date": ["2/3/4"]
-    }}
+    },
+    {
+        "path": ["/picture2"],
+        "caption": ["neckittt"],
+        "date": ["2/3/4"]
+    }]}
     return data
 
 @app.route("/posts", methods = ['GET'])
 def posts():
-    data = {"posts":
+    data = {"posts":[
     {
         "path": ["/picture1"],
         "caption": ["kys"],
         "date": ["2/2/2"]
         }
-    }
+    ]}
     return data
 
 

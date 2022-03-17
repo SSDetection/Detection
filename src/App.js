@@ -30,6 +30,7 @@ function App() {
 // console.log(data)
   const [username, setUsername] = useState('@username');
   const [data, setData] = useState();
+  const [post, setPost] = useState();
   const [update, setUpdate] = useState(false);
 
   let textInput = React.createRef();
@@ -47,23 +48,26 @@ function App() {
       }
     }
     fetchUser();
+    
     return () => {
       didCancel = true;
     }
   }, []);
 
   useEffect(() => {
-    // POST requ"est using fetch inside useEffect React hook
+    // POST request using fetch inside useEffect React hook
     if (username !== "@username"){
       console.log("this shit running")
       const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: "endrit"})
+          body: JSON.stringify({username})
       };
       fetch('/requests', requestOptions)
           .then(response => response.json())
           .then(data => setData(data))
+          console.log(data)
+          renderData(data);
     }
 // empty dependency array means this effect will only run once (like componentDidMount in classes)
 }, [username]);
@@ -71,6 +75,17 @@ function App() {
   function callBoth(){
     setUsername(textInput.current.value)
     setUpdate((prevState)=> !prevState);
+  }
+  function renderData(data) {
+      for (let i =0; i > data.posts.length; i++){
+        console.log(data.posts[i])
+        return (
+          <>
+          <h1>{data.posts[i].caption[i]}</h1>
+          <p>{username}</p>
+          </>
+        )
+      }
   }
 
   return (
@@ -86,13 +101,22 @@ function App() {
     //  }
     // </div>
     // </div >
+    
     <div className="App">
       {data && (
+      // data.map(renderData(data))
+        // <>
+        // <h1>{data.posts[0].caption[0]}</h1>
+        // <p>{username}</p>
+        // </>
         <>
-        <h1>{data.posts.caption[0]}</h1>
-        <p>{username}</p>
+        <div>
+          {data.posts.map (post => <div>{post.caption[0]}</div>)}
+        </div>
         </>
-      )}
+
+      )
+      }
       <input ref={textInput} type='text' placeholder={username}></input>
       <button onClick={() => {
         callBoth()
