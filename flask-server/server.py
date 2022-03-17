@@ -1,5 +1,4 @@
 import time
-
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -31,7 +30,7 @@ db = firestore.client()
 
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")
+#chrome_options.add_argument("--headless")
 
 PATH = "./chromedriver"
 #PATH = "flask-server/chromedriver"
@@ -52,15 +51,20 @@ password.send_keys("11900807zD")
 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Not Now')]"))).click()
 
-
+imagePaths = []
+profileName = "volter43"
 def download_profile():
+
     # goes to instagram
-    profileName = "volter43"
+   
     driver.get("https://www.instagram.com/" + profileName)
     posts = []
     # creates a directory named after the profile name
     if not os.path.isdir(profileName):
         os.mkdir(profileName)
+    else:
+        for f in os.listdir(profileName):
+            os.remove(os.path.join(profileName, f))
     path = os.getcwd()
     path = os.path.join(path, profileName)
 
@@ -120,7 +124,7 @@ def download_profile():
         image = Image.open(save_as)
 
         storage.child(profileName+"/"+profileName + str(image_count) + '.jpg').put(save_as)#profileName + str(image_count) + '.jpg'
-        
+        imagePaths.append(profileName+"/"+profileName + str(image_count) + '.jpg')
         #image.show()
         doc_ref.set({
         'pic':download_url,
@@ -131,7 +135,32 @@ def download_profile():
     return profileDict
 
 
-download_profile()
+
+
+from flask import Flask, jsonify
+app = Flask(__name__)
+
+
+print("### Running ###")
+
+if os.path.isdir(profileName):
+    for f in os.listdir(profileName):
+            imagePaths.append(profileName+"/"+f)
+else:
+    download_profile()
+
+print("### Finished ###")
+
+@app.route("/imagePaths")
+def scrapperResults():
+    return jsonify({'imagePaths': imagePaths})
+
+@app.route("/members")
+def members():
+    return {"members": ["Member1","Member2","Member3"]}
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 #auth = firebase_storage.auth()
 #email = "robertsonbrinker@gmail.com"
