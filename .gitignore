@@ -9,6 +9,8 @@
 **/.firebase
 **/.firebaserc
 **/firebase-debug.log
+**/ServiceAccountKey.json
+
 # testing
 /coverage
 
