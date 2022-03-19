@@ -127,7 +127,7 @@
 }
 
 .display {
-  min-width: 80%;
+  min-width: 70%;
   background-color: lightgrey;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .result {
-  width:25%;
+  width:23%;
   max-height: 25%;
   background-color: gray;
   margin: 0.5%;

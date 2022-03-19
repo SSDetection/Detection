@@ -1,20 +1,76 @@
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import './App.css';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { wait } from '@testing-library/user-event/dist/utils';
+import 'firebase/storage';  
 import logo from './logo.svg';
 import { useEffect, useRef, useState } from 'react';
 import React, { Component } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Container } from "semantic-ui-react";
 import { Carousel } from 'react-responsive-carousel';
 import './App.css';
 import * as d3 from 'd3';
 //import ScriptTag from 'react-script-tag/lib/ScriptTag';
 //import ScriptTag from 'react-script-tag';
-import { Helmet } from "react-helmet";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { initializeApp } from "firebase/app";
-import { wait } from '@testing-library/user-event/dist/utils';
-import firebase from 'firebase/app';
-import 'firebase/storage';  
+//import { Helmet } from "react-helmet";
+//import {Requests} from "./Requests.js"
+//import {Posts} from "./Posts.js"
+
 
 function App() {
+
+  const [username, setUsername] = useState('username');
+  const [dataE, setDataE] = useState();
+  const [post, setPost] = useState();
+  const [update, setUpdate] = useState(false);
+
+  let textInput = React.createRef();
+
+  function callBoth(){
+    setUsername(textInput.current.value)
+    setUpdate((prevState)=> !prevState);
+  }
+
+
+  useEffect(()=> {
+    console.log("Page Rendered")
+    let didCancel = false;
+
+    /*async function fetchUser() {
+      if (!didCancel) {
+        let response = await fetch('/posts')
+        let userPosts = await response.json()
+        setData(userPosts)
+        console.log(data)
+      }
+    }
+  fetchUser();
+    
+    return () => {
+      didCancel = true;
+    }*/
+  }, []);
+
+
+  useEffect(() => {
+    // POST request using fetch inside useEffect React hook
+    if (username !== "username"){
+      console.log("this shit running")
+      const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({username})
+      };
+      fetch('/requests', requestOptions)
+          .then(response => response.json())
+          .then(data => setData(data))
+          console.log(data)
+          // renderData(data);
+    }
+// this username means everytime it changes this useeffect gets run
+}, [username]);
 
   //SERVER STUFF
   const [servData, setData] = useState([{}])
@@ -28,7 +84,7 @@ function App() {
         console.log(servData)
       }
     )
-  }, [])
+  }, [username]);
 
   console.log("servData", servData.imagePaths)
   var pic = "https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/37857780_671801903168144_2183731892077985792_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=OA9SgZiiqUMAX-xgCOH&tn=XWaIxGnaRJOZZYYQ&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgzMDE3NDY5MDc4NDUxMjg4NA%3D%3D.2-ccb7-4&oh=00_AT9N_A82hAjIhvnG8bVKnVIag3dbYpJ2UJ_By1rmevR_WA&oe=621AE7F7&_nc_sid=83d603"
@@ -53,72 +109,7 @@ function App() {
 
   const imagePaths = Object.values(servData)[0];
   var imagePathsArr = Object.values(imagePaths);
-
-  var rows = [];
  
-  /*for (var i = 1; i < imagePaths.length-3; i++) {
-  
-    var imagePath = imagePaths[i];
-  
-    if (imagePath) {
-  
-      // note: we are adding a key prop here to allow react to uniquely identify each
-      // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
-      //rows.push(<p key={i}>{i}</p>);
-      console.log("hi bud", i)
-    
-  
-      console.log("imagePath",imagePath);
-      console.log("string","volter43/volter431.jpg");
-  
-      rows.push(
-        <div class="result centercontent">
-          <p class="analysis"><span class="green">clear, {imagePath}</span></p>
-          <img id={imagePath} class="center" alt={imagePath}/>
-          <p class="comment">example</p>
-        </div>);
-      
-      console.log("download about to run")
-  
-      getDownloadURL(ref(storage, imagePath))
-        .then((url) => {
-         
-          console.log("download running")
-          var img = document.getElementById(imagePath);
-          if (img){
-            console.log("!!!image found!!!", imagePath)
-            img.setAttribute('src', url);
-            lastImageURLDownloaded=true;
-          }
-          else{
-            console.log("NO image found", imagePath)
-          }
-  
-        })
-        .catch((error) => {
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/object-not-found':
-              // File doesn't exist
-              break;
-            case 'storage/unauthorized':
-              // User doesn't have permission to access the object
-              break;
-            case 'storage/canceled':
-              // User canceled the upload
-              break;
-            // ...
-            case 'storage/unknown':
-              // Unknown error occurred, inspect the server response
-              break;
-            }
-        });
-      }
-  }*/
-
-  
-
   const promises = [];
 
   imagePathsArr.forEach(imagePath => {
@@ -145,7 +136,29 @@ function App() {
       }
     });
 
+//Create Nested Image Path
+var nestedPaths = [];
+var nest = [];
+var imageIndex = 0;
 
+for (var i = 0; i <= (imagePathsArr.length - 1)/4; i++) {
+  if(imagePathsArr[((4*i))]){
+    nest[((4*i))]=imagePathsArr[((4*i))];
+  }
+  if(imagePathsArr[((4*i)+1)]){
+    nest[((4*i)+1)]=imagePathsArr[((4*i)+1)];
+  }
+  if(imagePathsArr[((4*i)+2)]){
+    nest[((4*i)+2)]=imagePathsArr[((4*i)+2)];
+  }
+  if(imagePathsArr[((4*i)+3)]){
+    nest[((4*i)+3)]=imagePathsArr[((4*i)+3)];
+  }
+  nestedPaths[i]=nest;
+  nest=[];
+}
+
+console.log(nestedPaths);
 
 
   //BAR GRAPH
@@ -291,14 +304,48 @@ function App() {
   var thumbwidth = 500
 
   return (
-    <div >
 
+    <div >
+{
+      <div className="App">
+      {data && (
+        // data.map(renderData(data))
+          // <>
+          // <h1>{data.posts[0].caption[0]}</h1>
+          // <p>{username}</p>
+          // </>
+
+          
+
+          <>
+          
+          <div>
+          
+           
+            { 
+              //{data.Data.map (post => <div>   
+              //<h2>{post.Caption}</h2>
+              //<p>{post.Date}</p>
+              //</div>)}
+            }
+          </div>
+          </>
+
+        )
+        }
+        
+      </div> 
+}
       <header className="App-header ">
 
-        <form onSubmit={addTodo} class="center" align="center">
-          <input type="text" placeholder="Enter name here" ref={todoText} />
-          <input type="submit" value="Search" />
-        </form>
+        <div className="App">
+          <input ref={textInput} type='text' placeholder={username}></input>
+          <button onClick={() => {
+            callBoth()
+          }}>
+            Search
+          </button>
+        </div>
 
         <form action="/action_page.php" class="sidebyside right" align="right">
           <label for="cars">Sort Posts by</label>
@@ -317,7 +364,7 @@ function App() {
       <div class="sidebyside body">
         {/* Side Bar */}
         <div class="sidebar">
-          <h1>@username</h1>
+          <h1>@{username}</h1>
           <h1 class="orange">
             Interest Level: Medium
           </h1>
@@ -345,7 +392,82 @@ function App() {
           </div>
         </div>
         {/* Main */}
+
+        
+
         <div class="display">
+
+            {(typeof nestedPaths === 'undefined') ? (
+                    <p>Loading...</p>
+                  ) : (
+                    nestedPaths.map((imagePath, j) => (
+                      <div class="sidebyside">
+
+                        {(typeof nestedPaths[j] === 'undefined') ? (
+                            <p>Loading...</p>
+                          ) : (
+                            nestedPaths[j].map((imagePaths, i) => (
+
+                              <div class="result centercontent">
+                                <p class="analysis"><span class="green">clear, {i+1}</span></p>
+                                <img id={'photo' + (i + 1)} class="center" />
+                                <p class="comment">example</p>
+                              </div>
+                            ))
+                          )}
+
+                      </div>
+
+                    ))
+                  )}
+
+            <p>break</p>
+
+            {(typeof servData.imagePaths === 'undefined') ? (
+                <p>Loading...</p>
+              ) : (
+                servData.imagePaths.map((imagePath, i) => (
+                  <div class="sidebyside">
+                    <div class="result centercontent">
+                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+1)}</span></p>
+                      <img id={'photo' + ((((i)*3) + i)+1)} class="center" />
+                      <p class="comment">example</p>
+                    </div>
+                    <div class="result centercontent">
+                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+2)}</span></p>
+                      <img id={'photo' + ((((i)*3) + i)+2)} class="center" />
+                      <p class="comment">example</p>
+                    </div>
+                    <div class="result centercontent">
+                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+3)}</span></p>
+                      <img id={'photo' + ((((i)*3) + i)+3)} class="center" />
+                      <p class="comment">example</p>
+                    </div>
+                    <div class="result centercontent">
+                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+4)}</span></p>
+                      <img id={'photo' + ((((i)*3) + i)+4)} class="center" />
+                      <p class="comment">example</p>
+                    </div>
+                  </div>
+                ))
+              )}
+         
+
+
+          <div class="sidebyside">
+            {(typeof servData.imagePaths === 'undefined') ? (
+                <p>Loading...</p>
+              ) : (
+                servData.imagePaths.map((imagePaths, i) => (
+
+                  <div class="result centercontent">
+                    <p class="analysis"><span class="green">clear, {i+1}</span></p>
+                    <img id={'photo' + (i + 1)} class="center" />
+                    <p class="comment">example</p>
+                  </div>
+                ))
+              )}
+          </div>
 
           <div class="sidebyside">
             <div class="result centercontent">
@@ -424,10 +546,22 @@ function App() {
               <p class="comment">another excusse to say<span class="red">dies</span></p>
             </div>
           </div>
-
-
-
         </div>
+      </div>
+
+      <div>
+        {(typeof servData.imagePaths === 'undefined') ? (
+          <p>Loading...</p>
+        ) : (
+          servData.imagePaths.map((imagePaths, i) => (
+
+            <div class="result centercontent">
+              <p class="analysis"><span class="green">clear, {i}</span></p>
+              <img id={'photo' + (i + 1)} class="center" />
+              <p class="comment">example</p>
+            </div>
+          ))
+        )}
       </div>
 
 
@@ -560,25 +694,7 @@ function App() {
 
       </div>
 
-      <div>
-
-        {(typeof servData.imagePaths === 'undefined') ? (
-          <p>Loading...</p>
-        ) : (
-          servData.imagePaths.map((imagePaths, i) => (
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear, {i}</span></p>
-              <img id={'photo' + (i + 1)} class="center" />
-              <p class="comment">example</p>
-            </div>
-          ))
-        )}
-
-
-      </div>
-
-      <tbody>{rows}</tbody>
+      
 
     </div>
   );
