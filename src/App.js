@@ -102,10 +102,10 @@ function App() {
         
         <div>
           <h1>{username}</h1>
-          {data.posts.map (post => <div>
+          {data.Data.map (post => <div>
             
-            <h2>{post.caption[0]}</h2>
-            <p>{post.date[0]}</p>
+            <h2>{post.Caption}</h2>
+            <p>{post.Date}</p>
             </div>)}
         </div>
         </>

@@ -14,56 +14,63 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import json
+import wget
 # from selenium.webdriver.chrom.options import Options
-
-
-def download_profile():
-    options = Options()
-    options.add_argument("--headless")
+options = Options()
+options.add_argument("--headless")
 
 # PATH = "./chromedriver"
-    PATH = "./chromedriver"
+PATH = "./chromedriver"
 # /Users/robertsonbrinker/Documents/GitHub/Detection/flask-server
-    print("####", os.path.exists(PATH), "####")
+print("####", os.path.exists(PATH), "####")
 # os.chmod(PATH, 755)
-    driver = webdriver.Chrome(service=Service(
-    ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(service=Service(
+ChromeDriverManager().install()), options=options)
 # executable_path="/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/chromedriver.exe"
 # "C:\\Users\\Andrew\\Downloads\\chromedriver_win32\\chromedriver.exe"
 
+
+
+def download_profile(profileName):
     driver.get("https://www.instagram.com/")
 
     username = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
     password = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
-# enter login information
+    # enter login information
     username.clear()
     password.clear()
     username.send_keys("volter43")
     password.send_keys("11900807zD")
-# click log in and dismiss any notifications
+    # click log in and dismiss any notifications
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
     (By.CSS_SELECTOR, "button[type='submit']"))).click()
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
     (By.XPATH, "//button[contains(text(), 'Not Now')]"))).click()
-    profileName = "volter43"
+
+    # goes to instagram
+    
     driver.get("https://www.instagram.com/" + profileName)
     posts = []
+    # creates a directory named after the profile name
+    if not os.path.isdir(profileName):
+        os.mkdir(profileName)
+    path = os.getcwd()
+    path = os.path.join(path, profileName)
+
     links = driver.find_elements(By.TAG_NAME, "a")
     for link in links:
         post = link.get_attribute('href')
         if '/p/' in post:
             posts.append(post)
-    previous_height = driver.execute_script(
-        "return document.body.scrollHeight")
+    previous_height = driver.execute_script("return document.body.scrollHeight")
 
+    # scrolls to the bottom of the page
     while True:
-        driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(10)
-        current_height = driver.execute_script(
-            "return document.body.scrollHeight")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(5)
+        current_height = driver.execute_script("return document.body.scrollHeight")
         links = driver.find_elements(By.TAG_NAME, "a")
         for link in links:
             post = link.get_attribute('href')
@@ -74,32 +81,37 @@ def download_profile():
         previous_height = current_height
 
     posts = list(set(posts))
-    # with open(profileName + "Posts" + '.txt', "w") as output:
-    #    output.write(str(posts))
+    with open(profileName + "Posts" + '.txt', "w") as output:
+        output.write(str(posts))
 
-    # source_links = {}
-    source_links = []
-    i = 0
-
+    image_count = 0
+    dataList = []
     for post in posts:
         driver.get(post)
-        time.sleep(10)
-        try:
-            ele = driver.find_element(
-                By.CSS_SELECTOR, "img[style='object-fit: cover;']")
-        except NoSuchElementException:
-            pass
-        try:
-            if ele is not None:
-                download_url = driver.find_element(
-                    By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
-                source_links.append(download_url)
-                # source_links[i]=download_url
-                i = i+1
-        except NoSuchElementException:
-            pass
+        time.sleep(4)
+        profileData = {}
+        if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
+            download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
+            save_as = os.path.join(path, profileName + str(image_count) + '.jpg')
+            wget.download(download_url, save_as)
+            profileData["Image"] = download_url
+            image_count = image_count + 1
 
-    return source_links
+        if driver.find_element(By.XPATH, "//time[@class='_1o9PC']") is not None:
+            date = driver.find_element(By.XPATH, "//time[@class='_1o9PC']").text
+            profileData["Date"] = date
+
+        if driver.find_element(By.XPATH, ".//span[@class = '']") is not None:
+            comment = driver.find_element(By.XPATH, "//div[@class='C4VMK']//span[@class='_7UhW9   xLCgt      MMzan   "
+                                                    "KV-D4           se6yk       T0kll ']")
+            caption = comment.text
+            profileData["Caption"] = caption
+        dataList.append(profileData)
+    profileDict = {"Data": dataList}
+    fileString = json.dumps(profileDict)
+    jsonFile = open("data.json", "w")
+    jsonFile.write(fileString)
+    return profileDict
 
 app = Flask(__name__)
 
@@ -120,34 +132,34 @@ def requests():
     data = request.get_json()
     print(type(data))
     print(data)
-    data['username1'] = 'endrit'
-    print(data)
-    print(data.get("username"))
-    data = {"posts":[
-    {
-        "path": ["/picture2"],
-        "caption": ["neckit"],
-        "date": ["2/3/4"]
-    },
-    {
-        "path": ["/picture2"],
-        "caption": ["neckittt"],
-        "date": ["2/33/4"]
-    },
-    {
-        "path": ["/picture2"],
-        "caption": ["u r noob"],
-        "date": ["23/3/4"]
-    }]}
-    return data
+    newdata = download_profile(data['username'])
+    print(newdata)
+    
+    # data = {"posts":[
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["neckit"],
+    #     "date": ["2/3/4"]
+    # },
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["neckittt"],
+    #     "date": ["2/33/4"]
+    # },
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["u r noob"],
+    #     "date": ["23/3/4"]
+    # }]}
+    return newdata
 
 @app.route("/posts", methods = ['GET'])
 def posts():
-    data = {"posts":[
+    data = {"Data":[
     {
-        "path": ["/picture1"],
-        "caption": ["kys"],
-        "date": ["2/2/2"]
+        "Image": ["/picture1"],
+        "Caption": ["kys"],
+        "Date": ["2/2/2"]
         }
     ]}
     return data
