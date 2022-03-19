@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-
+import json
 import os
 import wget
 
@@ -60,7 +60,6 @@ def download_profile():
         output.write(str(posts))
 
     image_count = 0
-    profileDict = {}
     dataList = []
     for post in posts:
         driver.get(post)
@@ -84,7 +83,10 @@ def download_profile():
             profileData["Caption"] = caption
         dataList.append(profileData)
     profileDict = {"Data": dataList}
-    print(profileDict)
+    fileString = json.dumps(profileDict)
+    jsonFile = open("data.json", "w")
+    jsonFile.write(fileString)
+
     return profileDict
 
 
