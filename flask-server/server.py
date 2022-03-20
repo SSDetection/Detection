@@ -8,8 +8,9 @@ import os
 import wget
 from PIL import Image
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import storage as admin_storage, credentials, firestore
 import pyrebase
+#from pyrebase.pyrebase import storage  
 from flask import request
 from flask import Flask, jsonify
 from flask import request
@@ -23,6 +24,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import json
 import wget
+
+
+
 
 config = {
   "apiKey": "AIzaSyDTht3F49SARp0XE1SyjQiTLpX_7osbYh4",
@@ -41,7 +45,6 @@ cred = credentials.Certificate('./ServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
 chrome_options = Options()
 #chrome_options.add_argument("--headless")
 
@@ -52,9 +55,20 @@ print("####",os.path.exists(PATH),"####")
 #os.chmod(PATH, 755)
 
 
+
 imagePaths = []
-profileName = "volter43"
+#profileName = "volter43"
+profileName=""
+
+
+
+
+#https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/volter43%2Fvolter435.jpg?alt=media&token=172aaa9f-fef9-4dc6-adf0-b4ab101154ec
+#https://storage.googleapis.com/storage/v1/b/senior-capstone-8f433.appspot.com/o/volter43%2Fvolter435.jpg
 def download_profile(profileName):
+
+    
+
     imagePaths.clear()
     driver = webdriver.Chrome(executable_path=PATH, options=chrome_options)
     driver.get("https://www.instagram.com/")

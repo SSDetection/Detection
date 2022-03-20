@@ -1,6 +1,6 @@
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import './App.css';
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, deleteObject } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { wait } from '@testing-library/user-event/dist/utils';
 import 'firebase/storage';  
@@ -29,9 +29,12 @@ function App() {
   let textInput = React.createRef();
 
   function callBoth(){
-    setUsername(textInput.current.value)
+    setUsername(textInput.current.value);
     setUpdate((prevState)=> !prevState);
+    tryResetFolderInStorage(textInput.current.value);
   }
+
+  
 
 
   useEffect(()=> {
@@ -158,8 +161,27 @@ for (var i = 0; i <= (imagePathsArr.length - 1)/4; i++) {
   nest=[];
 }
 
-console.log(nestedPaths);
-
+function tryResetFolderInStorage(inputName){
+  var allGone = false;
+  var i=0
+  while(!allGone){
+    console.log("DELETE")
+    // Create a reference to the file to delete
+    const profileRef = ref(storage, inputName+'/'+inputName+i+'.jpg');
+    console.log(profileRef);
+    // Delete the file
+    deleteObject(profileRef).then(() => {
+      // File deleted successfully
+    }).catch((error) => {
+      allGone = true;
+      // Uh-oh, an error occurred!
+    });
+    i=i+1
+    if(i>10){
+      allGone=true;
+    }
+  }
+}
 
   //BAR GRAPH
 
@@ -343,7 +365,12 @@ console.log(nestedPaths);
           <button onClick={() => {
             callBoth()
           }}>
-            Search
+            Download
+          </button>
+          <button onClick={() => {
+            tryResetFolderInStorage(textInput.current.value)
+          }}>
+            DELETE
           </button>
         </div>
 
@@ -397,6 +424,25 @@ console.log(nestedPaths);
 
         <div class="display">
 
+
+        <div>
+        {(typeof servData.imagePaths === 'undefined') ? (
+          <p>Loading...</p>
+        ) : (
+          servData.imagePaths.map((imagePaths, i) => (
+
+            <div class="result centercontent">
+              <p class="analysis"><span class="green">clear, {i}</span></p>
+              <img id={'photo' + (i + 1)} class="center" />
+              <p class="comment">example</p>
+            </div>
+          ))
+        )}
+      </div>
+
+
+
+
             {(typeof nestedPaths === 'undefined') ? (
                     <p>Loading...</p>
                   ) : (
@@ -421,7 +467,7 @@ console.log(nestedPaths);
                     ))
                   )}
 
-            <p>break</p>
+            <p className="center">LOADING CONTENT</p>
 
             {(typeof servData.imagePaths === 'undefined') ? (
                 <p>Loading...</p>
@@ -549,20 +595,7 @@ console.log(nestedPaths);
         </div>
       </div>
 
-      <div>
-        {(typeof servData.imagePaths === 'undefined') ? (
-          <p>Loading...</p>
-        ) : (
-          servData.imagePaths.map((imagePaths, i) => (
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear, {i}</span></p>
-              <img id={'photo' + (i + 1)} class="center" />
-              <p class="comment">example</p>
-            </div>
-          ))
-        )}
-      </div>
+      
 
 
       <div class="carousel">
