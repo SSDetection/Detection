@@ -1,6 +1,6 @@
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import './App.css';
-import { getStorage, ref, getDownloadURL, deleteObject } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, deleteObject} from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { wait } from '@testing-library/user-event/dist/utils';
 import 'firebase/storage';  
@@ -12,6 +12,7 @@ import { Container } from "semantic-ui-react";
 import { Carousel } from 'react-responsive-carousel';
 import './App.css';
 import * as d3 from 'd3';
+import { getFirestore,  collection, getDocs } from "firebase/firestore"
 //import ScriptTag from 'react-script-tag/lib/ScriptTag';
 //import ScriptTag from 'react-script-tag';
 //import { Helmet } from "react-helmet";
@@ -20,7 +21,7 @@ import * as d3 from 'd3';
 
 
 function App() {
-
+  //var captions = [];
   const [username, setUsername] = useState('username');
   const [dataE, setDataE] = useState();
   const [post, setPost] = useState();
@@ -30,13 +31,25 @@ function App() {
 
   function callBoth(){
     setUsername(textInput.current.value);
-    setUpdate((prevState)=> !prevState);
-    tryResetFolderInStorage(textInput.current.value);
+    //setUpdate((prevState)=> !prevState);
+    fetchFromRequests();
+    getImages();
+    //captions = getCollection(textInput.current.value);
   }
 
+  function fetchFromRequests(){
+    console.log("this shit running")
+      const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({username})
+      };
+      fetch('/requests', requestOptions)
+          .then(response => response.json())
+          .then(data => setData(data))
+          console.log(data)
+  }
   
-
-
   useEffect(()=> {
     console.log("Page Rendered")
     let didCancel = false;
@@ -56,8 +69,7 @@ function App() {
     }*/
   }, []);
 
-
-  useEffect(() => {
+  /*useEffect(() => {
     // POST request using fetch inside useEffect React hook
     if (username !== "username"){
       console.log("this shit running")
@@ -73,10 +85,11 @@ function App() {
           // renderData(data);
     }
 // this username means everytime it changes this useeffect gets run
-}, [username]);
+}, [username]);*/
 
   //SERVER STUFF
   const [servData, setData] = useState([{}])
+  const [servCapData, setCapData] = useState([{}])
 
   useEffect(() => {
     fetch("/imagePaths").then(
@@ -88,6 +101,20 @@ function App() {
       }
     )
   }, [username]);
+
+  useEffect(() => {
+    fetch("/captions").then(
+      res => res.json()
+    ).then(
+      servData => {
+        setCapData(servData)
+        console.log(servData)
+      }
+    )
+  }, [username]);
+
+  const captions = Object.values(servCapData)[0];
+  var captionsArr = Object.values(captions);
 
   console.log("servData", servData.imagePaths)
   var pic = "https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/37857780_671801903168144_2183731892077985792_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=OA9SgZiiqUMAX-xgCOH&tn=XWaIxGnaRJOZZYYQ&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgzMDE3NDY5MDc4NDUxMjg4NA%3D%3D.2-ccb7-4&oh=00_AT9N_A82hAjIhvnG8bVKnVIag3dbYpJ2UJ_By1rmevR_WA&oe=621AE7F7&_nc_sid=83d603"
@@ -107,12 +134,40 @@ function App() {
 
   // Get a reference to the storage service, which is used to create references in your storage bucket
   const storage = getStorage(firebaseApp);
-
+  const db = getFirestore();
   //Create a reference with an initial file path and name
 
   const imagePaths = Object.values(servData)[0];
   var imagePathsArr = Object.values(imagePaths);
- 
+
+  function getImages(){
+    const promises = [];
+
+    imagePathsArr.forEach(imagePath => {
+      const promise = getDownloadURL(ref(storage, imagePath))
+        .catch(err => {
+          console.log('error', err);
+          return "";
+        })
+        .then(fileUrl => {
+          return fileUrl;
+        });
+      promises.push(promise);
+    });
+
+    Promise.all(promises)
+      .catch(err => {
+        console.log('error', err);
+      })
+      .then(urls => {
+        for (var i = 0; i <= urls.length - 1; i++) {
+          if (urls[i] != '') {
+            document.getElementById('photo' + (i + 1)).src = urls[i];
+          }
+        }
+      });
+  }
+
   const promises = [];
 
   imagePathsArr.forEach(imagePath => {
@@ -138,7 +193,7 @@ function App() {
         }
       }
     });
-
+ 
 //Create Nested Image Path
 var nestedPaths = [];
 var nest = [];
@@ -182,6 +237,19 @@ function tryResetFolderInStorage(inputName){
     }
   }
 }
+
+/*async function getCollection(inputName){
+  var captions = [];
+  const querySnapshot = await getDocs(collection(db, inputName+"-posts"));
+  console.log(querySnapshot);
+  querySnapshot.forEach((doc) => {
+    captions[doc.id]=doc.data().caption;
+    // doc.data() is never undefined for query doc snapshots
+  });
+  return captions
+}
+captions = getCollection(username);
+*/
 
   //BAR GRAPH
 
@@ -362,29 +430,33 @@ function tryResetFolderInStorage(inputName){
 
         <div className="App">
           <input ref={textInput} type='text' placeholder={username}></input>
-          <button onClick={() => {
+          <button className="white lightgreyback" onClick={() => {
             callBoth()
           }}>
             Download
           </button>
-          <button onClick={() => {
+          <button className="white lightgreyback" onClick={() => {
             tryResetFolderInStorage(textInput.current.value)
           }}>
             DELETE
           </button>
-        </div>
 
-        <form action="/action_page.php" class="sidebyside right" align="right">
-          <label for="cars">Sort Posts by</label>
-          <select name="cars" id="cars">
-            <optgroup label="Sorting Options">
+          <form className="App" action="/action_page.php" class="sidebyside right" align="right">
+          <label for="cars">sort posts by </label>
+          <select name="cars" id="cars" className="white lightgreyback">
+            <optgroup label="Sorting Options" className="white lightgreyback">
               <option value="Latest Posts">Latest Posts</option>
               <option value="Score">Score</option>
             </optgroup>
           </select>
-          <br></br>
+          
           <input type="submit" value="Sort"></input>
         </form>
+
+
+        </div>
+
+        
 
       </header>
 
@@ -413,7 +485,7 @@ function tryResetFolderInStorage(inputName){
           <svg width={width} height={height}></svg>
 
 
-          <div id="d3-container" class="redback">
+          <div id="d3-container" class="midgreyback">
             <h6>Percentage of Posts with Guns</h6>
 
           </div>
@@ -422,7 +494,7 @@ function tryResetFolderInStorage(inputName){
 
         
 
-        <div class="display">
+        <div class="display darkgreyback">
 
 
         <div>
@@ -431,10 +503,10 @@ function tryResetFolderInStorage(inputName){
         ) : (
           servData.imagePaths.map((imagePaths, i) => (
 
-            <div class="result centercontent">
+            <div class="result centercontent midgreyback">
               <p class="analysis"><span class="green">clear, {i}</span></p>
               <img id={'photo' + (i + 1)} class="center" />
-              <p class="comment">example</p>
+              <p class="comment">{captionsArr[i]}</p>
             </div>
           ))
         )}
