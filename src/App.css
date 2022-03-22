@@ -80,11 +80,11 @@
 }
 
 .green {
-  color: greenyellow
+  color: rgb(103,203,100)
 }
 
 .red {
-  color: red
+  color: rgb(244,121,110)
 }
 
 .orange {
@@ -93,6 +93,10 @@
 
 .white {
   color: white
+}
+
+.lightlightgrey{
+  color:rgb(101, 101, 101)
 }
 
 .lightgreyback {

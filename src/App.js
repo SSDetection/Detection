@@ -140,6 +140,14 @@ function App() {
   const imagePaths = Object.values(servData)[0];
   var imagePathsArr = Object.values(imagePaths);
 
+  var first = imagePathsArr[0]
+  if(typeof first!='undefined'){
+    document.getElementById("usernameHeader").innerHTML = "@"+first.split("/")[0];
+    document.getElementById("inputBox").value = first.split("/")[0];
+  }
+  
+  
+  
   function getImages(){
     const promises = [];
 
@@ -250,6 +258,44 @@ function tryResetFolderInStorage(inputName){
 }
 captions = getCollection(username);
 */
+
+//if caption contains these words then set the color (green or red)
+const nonowords = ["Die", "kill", "death", "bomb", "life", "live", "gun", "weapon", "murder", "slay", 
+"execute", "hit", "massacre", "slaughter", "wipe out", "annihilate", "erase", "eradicate", "exterminate", 
+"finish", "obliterate", "neutralize", "sacrifice", "suffer", "waste", "shoot", "shoot up", "school", "class", 
+"injure", "hurt", "harm", "damage", "suicide", "save", "saved", "revenge", "taking out", "no remorse", "emotions", 
+"violence", "violent", "attack", "died", "hell", "bullet", "weapons", "bullets", "shoot", "shot", "shooting", 
+"officer", "police", "last", "shooter", "don’t come to school", "stay home", "blood", "bleed", "bleeding", 
+"bled", "trouble", "danger", "warning", "warn", "no remorse", "dead"];
+
+var captionColorArr = ["green","green","green","green","green","green","green","green","green","green","green","green"];
+var captionColorIndex = 0;
+var threateningSpeechCount = 0;
+var interestColor = "lightlightgrey";
+var interestText = "NULL";
+var redPresent = false;
+var captionsArrChecked = false;
+captionsArr.forEach(caption => {
+  captionColorArr[captionColorIndex] = ["green","clear"];
+  nonowords.forEach(nonoword => {
+    if(caption.includes(nonoword)){
+      captionColorArr[captionColorIndex]=["red","language"];
+      interestText = "SOME";
+      interestColor = "red";
+      threateningSpeechCount++;
+      redPresent=true;
+    }
+  });
+  captionsArrChecked = true;
+  captionColorIndex = captionColorIndex+1;
+});
+
+if(!redPresent && captionsArrChecked ){
+  interestText="NONE";
+  interestColor="green";
+}
+
+console.log("captionColorArr",captionColorArr)
 
   //BAR GRAPH
 
@@ -429,7 +475,7 @@ captions = getCollection(username);
       <header className="App-header ">
 
         <div className="App">
-          <input ref={textInput} type='text' placeholder={username}></input>
+          <input ref={textInput} type='text' placeholder={username} id="inputBox"></input>
           <button className="white lightgreyback" onClick={() => {
             callBoth()
           }}>
@@ -463,11 +509,11 @@ captions = getCollection(username);
       <div class="sidebyside body">
         {/* Side Bar */}
         <div class="sidebar">
-          <h1>@{username}</h1>
-          <h1 class="orange">
-            Interest Level: Medium
+          <h1 id="usernameHeader">@{username}</h1>
+          <h1 class={interestColor}>
+            Interest Level: {interestText}
           </h1>
-          <div class="sidebyside font10 orange">
+          <div class="sidebyside font10">
             <ul>
               <li>knives</li>
               <li>guns</li>
@@ -476,17 +522,17 @@ captions = getCollection(username);
             <ul>
               <li>1 potential</li>
               <li>2 potential</li>
-              <li>5 potential</li>
+              <li>{threateningSpeechCount} potential</li>
             </ul>
           </div>
 
 
-          <h6>Percentage of Gun Posts for @Shooterboy</h6>
+          <h6>Percentage of Gun Posts for @{username}</h6>
           <svg width={width} height={height}></svg>
 
 
           <div id="d3-container" class="midgreyback">
-            <h6>Percentage of Posts with Guns</h6>
+          <h6># of Posts Over Time</h6>
 
           </div>
         </div>
@@ -495,24 +541,6 @@ captions = getCollection(username);
         
 
         <div class="display darkgreyback">
-
-
-        <div>
-        {(typeof servData.imagePaths === 'undefined') ? (
-          <p>Loading...</p>
-        ) : (
-          servData.imagePaths.map((imagePaths, i) => (
-
-            <div class="result centercontent midgreyback">
-              <p class="analysis"><span class="green">clear, {i}</span></p>
-              <img id={'photo' + (i + 1)} class="center" />
-              <p class="comment">{captionsArr[i]}</p>
-            </div>
-          ))
-        )}
-      </div>
-
-
 
 
             {(typeof nestedPaths === 'undefined') ? (
@@ -527,9 +555,9 @@ captions = getCollection(username);
                             nestedPaths[j].map((imagePaths, i) => (
 
                               <div class="result centercontent">
-                                <p class="analysis"><span class="green">clear, {i+1}</span></p>
+                                <p class="analysis"><span class={captionColorArr[i][0]}>{captionColorArr[i][1]}</span></p>
                                 <img id={'photo' + (i + 1)} class="center" />
-                                <p class="comment">example</p>
+                                <p class="comment">{captionsArr[i]}</p>
                               </div>
                             ))
                           )}
@@ -539,265 +567,35 @@ captions = getCollection(username);
                     ))
                   )}
 
-            <p className="center">LOADING CONTENT</p>
-
-            {(typeof servData.imagePaths === 'undefined') ? (
-                <p>Loading...</p>
-              ) : (
-                servData.imagePaths.map((imagePath, i) => (
-                  <div class="sidebyside">
-                    <div class="result centercontent">
-                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+1)}</span></p>
-                      <img id={'photo' + ((((i)*3) + i)+1)} class="center" />
-                      <p class="comment">example</p>
-                    </div>
-                    <div class="result centercontent">
-                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+2)}</span></p>
-                      <img id={'photo' + ((((i)*3) + i)+2)} class="center" />
-                      <p class="comment">example</p>
-                    </div>
-                    <div class="result centercontent">
-                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+3)}</span></p>
-                      <img id={'photo' + ((((i)*3) + i)+3)} class="center" />
-                      <p class="comment">example</p>
-                    </div>
-                    <div class="result centercontent">
-                      <p class="analysis"><span class="green">clear, {((((i)*3) + i)+4)}</span></p>
-                      <img id={'photo' + ((((i)*3) + i)+4)} class="center" />
-                      <p class="comment">example</p>
-                    </div>
-                  </div>
-                ))
-              )}
-         
 
 
-          <div class="sidebyside">
-            {(typeof servData.imagePaths === 'undefined') ? (
-                <p>Loading...</p>
-              ) : (
-                servData.imagePaths.map((imagePaths, i) => (
-
-                  <div class="result centercontent">
-                    <p class="analysis"><span class="green">clear, {i+1}</span></p>
-                    <img id={'photo' + (i + 1)} class="center" />
-                    <p class="comment">example</p>
-                  </div>
-                ))
-              )}
-          </div>
-
-          <div class="sidebyside">
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear</span></p>
-              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/e35/65822034_350668148947846_4694153716710752181_n.jpg?_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=3cqE4brA-0wAX9v7yJj&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MjA4NDY3MTM2NjIyMTc5ODIyNA%3D%3D.2-ccb7-4&oh=00_AT9eE7oCMDoXMbrqIjTeG2h-rI5kxykL9gC9asR_cVcQ_g&oe=621B1BCD&_nc_sid=83d603" class="center" width="400" height="400" />
-              <p class="comment">All your base are belong to us</p>
+        {/*<div>
+        {(typeof servData.imagePaths === 'undefined') ? (
+          <p>Loading...</p>
+        ) : (
+          servData.imagePaths.map((imagePaths, i) => (
+            <div class="result centercontent midgreyback">
+              <p class="analysis"><span class={captionColorArr[i]}>CLEAR</span></p>
+              <img id={'photo' + (i + 1)} class="center" />
+              <p class="comment">{captionsArr[i]}</p>
             </div>
+          ))
+        )}
+      </div>*/}
 
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">language</span></p>
-              <img src={pic} class="center" />
-              <p class="comment">spoiler alert thanos <span class="red">dies</span></p>
-            </div>
 
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">gun</span></p>
-              <img src="https://www.instagram.com/p/CBqFrrCHVM7/media/?size=t" class="center" alt="Broken !"></img>
-              <p class="comment">at the range</p>
-            </div>
 
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">knife</span></p>
-              <img src="https://instagram.fdet3-1.fna.fbcdn.net/v/t51.2885-15/36592903_475617912890786_5820267975613087744_n.jpg?stp=dst-jpg_e35&_nc_ht=instagram.fdet3-1.fna.fbcdn.net&_nc_cat=102&_nc_ohc=SjiJtNrVxjYAX8oDdhv&edm=AABBvjUBAAAA&ccb=7-4&ig_cache_key=MTgyNDM5MzA3MTk4MTIxMTIwMQ%3D%3D.2-ccb7-4&oh=00_AT8znZwKcQAh0OboHHR2_KpbiQorjqC-nEzo66s_L2xVAw&oe=6230BF3B&_nc_sid=83d603" class="center" />
-              <p class="comment">my new kunai</p>
-            </div>
-          </div>
 
-          <div class="sidebyside">
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear</span></p>
-              <img src="/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/volter43/volter430.jpg" class="center" />
-              <p class="comment">no u</p>
-            </div>
+            
 
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear</span></p>
-              <img src="flask-server/volter43/volter430.jpg" class="center" />
-              <p class="comment">who else misses dan the train man</p>
-            </div>
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">language gun</span></p>
-              <img src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/Users%2Frobertsonbrinker%2FDocuments%2FGitHub%2FDetection%2Fflask-server%2Fvolter43%2Fvolter430.jpg?alt=media&token=ac551e73-6f73-4289-b064-24897afbc9bb" class="center" />
-              <p class="comment">suns out guns out or I get <span class="red">hangry</span></p>
-            </div>
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear</span></p>
-              <img src="yeet" class="center" />
-              <p class="comment">nice pic huh</p>
-            </div>
-          </div>
-
-          <div class="sidebyside">
-            <div class="result centercontent">
-              <p class="analysis"><span class="green">clear</span></p>
-              <img id="myimg2" class="center" />
-              <p class="comment">example</p>
-            </div>
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">language</span></p>
-              <img id="0" class="center" />
-              <p class="comment">another example <span class="red">dies</span></p>
-            </div>
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">language</span></p>
-              <img src="https://picsum.photos/99/102/?random" class="center" />
-              <p class="comment">happy <span class="red">dies</span> in the movies</p>
-            </div>
-
-            <div class="result centercontent">
-              <p class="analysis"><span class="red">language</span></p>
-              <img src="https://picsum.photos/99/99/?random" class="center" />
-              <p class="comment">another excusse to say<span class="red">dies</span></p>
-            </div>
-          </div>
+          
         </div>
       </div>
 
       
 
 
-      <div class="carousel">
-        <Carousel thumbWidth={thumbwidth}>
-          <div>
-            <img src="https://picsum.photos/800/401/?random" />
-            <p className="legend">Pic 1</p>
-          </div>
-          <div>
-            <img src="https://picsum.photos/800/402/?random" />
-            <p className="legend">Pic 2</p>
-          </div>
-          <div>
-            <img src="https://picsum.photos/800/400/?random" />
-            <p className="legend">Pic 3</p>
-          </div>
-        </Carousel>
-      </div>
-
-      <div className="row">
-        <div className="column">
-          <img src="https://picsum.photos/300/100/?random" />
-          <img src="https://picsum.photos/300/200/?random" />
-          <img src="https://picsum.photos/300/300/?random" />
-          <img src="https://picsum.photos/300/400/?random" />
-          <img src="https://picsum.photos/300/301/?random" />
-          <img src="https://picsum.photos/300/201/?random" />
-          <img src="https://picsum.photos/300/101/?random" />
-        </div>
-        <div className="column">
-          <img src="https://picsum.photos/300/104/?random" />
-          <img src="https://picsum.photos/300/204/?random" />
-          <img src="https://picsum.photos/300/304/?random" />
-          <img src="https://picsum.photos/300/402/?random" />
-          <img src="https://picsum.photos/300/302/?random" />
-          <img src="https://picsum.photos/300/202/?random" />
-          <img src="https://picsum.photos/300/102/?random" />
-        </div>
-      </div>
-
-      <ul>
-        {todos.map(todo => (<li >{todo}</li>))}
-      </ul>
-
-      <div class="summary">
-        <div>
-          <h1 class="green">Interest Level : Low</h1>
-          <p>A low interest level indicates a lack of the presence of these things on a user's instagram profile:</p>
-          <div class="sidebyside">
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>1 potential appearence(s)</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <img src="https://picsum.photos/300/299/?random" />
-          <p># of posts vs time</p>
-        </div>
-
-      </div>
-
-      <div class="summary">
-        <div>
-          <img src="https://picsum.photos/300/301/?random" />
-        </div>
-        <div>
-          <h1>@username</h1>
-          <p>this is where the user bio is displayed where <span class="red">aggresive</span> words are colored</p>
-          <div class="sidebyside">
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>1 potential appearence(s)</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <h1>+1</h1>
-        </div>
-      </div>
-
-      <div class="summary">
-        <div>
-          <img src="https://picsum.photos/300/300/?random" />
-        </div>
-        <div>
-          <h1>caption:</h1>
-          <p>Can you believe I caught this on camera!</p>
-          <div class="sidebyside">
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <h1>+0</h1>
-        </div>
-      </div>
-
-      <div>
-
-        {(typeof servData.members === 'undefined') ? (
-          <p>Loading...</p>
-        ) : (
-          servData.members.map((members, i) => (
-            <p>{members}</p>
-          ))
-        )}
-
-
-      </div>
+      
 
       
 

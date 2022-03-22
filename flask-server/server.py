@@ -169,7 +169,7 @@ def download_profile(profileName):
 
 #download_profile("volter43")
 
-np.savetxt(profileName+"Captions"+".txt", captions , delimiter=" ", newline = "\n", fmt="%s")
+np.savetxt(profileName+"Captions"+".txt", captions , delimiter="\t", newline = "\n", fmt="%s")
 
 if os.path.isdir(profileName):
         for f in os.listdir(profileName):
@@ -191,7 +191,7 @@ def scrapperResults():
 @app.route("/captions")
 def captionsResults():
     if os.path.isfile(profileName+"Captions.txt"):
-        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter=",")
+        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
         captions.extend(temp.tolist())
     return jsonify({'captions': captions})
 
@@ -237,7 +237,11 @@ def requests():
 
 
     if os.path.isfile(profileName+"Captions.txt"):
-        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter=",")
+        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
+        #temp[0].remove("[")
+        #temp[len(temp)-1].remove("]")
+        #for cap in temp:
+        #    cap=cap.remove("#").remove("s ")
         captions.extend(temp.tolist())
     print("### Finished ###")
     
