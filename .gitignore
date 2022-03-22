@@ -5,6 +5,12 @@
 /.pnp
 .pnp.js
 
+# firebase
+**/.firebase
+**/.firebaserc
+**/firebase-debug.log
+**/ServiceAccountKey.json
+
 # testing
 /coverage
 
