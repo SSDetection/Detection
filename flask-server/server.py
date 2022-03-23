@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask import request
+import requests
 import time
 import urllib.request
 import os
@@ -15,6 +16,20 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import json
 import wget
+import tensorflow as tf
+from PIL import Image
+import numpy as np # linear algebra
+from skimage import transform
+
+new_model = tf.keras.models.load_model('gun_model.h5')
+
+def load(filename):
+   np_image = Image.open(filename)
+   np_image = np.array(np_image).astype('float32')/255
+   np_image = transform.resize(np_image, (224, 224, 1))
+   np_image = np.expand_dims(np_image, axis=0)
+   return np_image
+
 # from selenium.webdriver.chrom.options import Options
 options = Options()
 options.add_argument("--headless")
@@ -96,6 +111,9 @@ def download_profile(profileName):
             wget.download(download_url, save_as)
             profileData["Image"] = download_url
             image_count = image_count + 1
+            image = load(save_as)
+            num = "{:.2f}".format((new_model.predict(image)[0][0]) * 100)
+            profileData["Accuracy"] = num
 
         if driver.find_element(By.XPATH, "//time[@class='_1o9PC']") is not None:
             date = driver.find_element(By.XPATH, "//time[@class='_1o9PC']").text
