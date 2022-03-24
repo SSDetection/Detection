@@ -1,4 +1,5 @@
 .App {
+  color: white;
   text-align: center;
 }
 
@@ -14,7 +15,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: rgb(51, 51, 51);
   
   /*
   min-height: 100vh;
@@ -79,15 +80,36 @@
 }
 
 .green {
-  color: greenyellow
+  color: rgb(103,203,100)
 }
 
 .red {
-  color: red
+  color: rgb(244,121,110)
 }
 
 .orange {
   color: orange
+}
+
+.white {
+  color: white
+}
+
+.lightlightgrey{
+  color:rgb(101, 101, 101)
+}
+
+.lightgreyback {
+  background-color: rgb(71, 71, 71);
+  box-shadow: none;
+}
+
+.midgreyback {
+  background-color: rgb(51, 51, 51);
+}
+
+.darkgreyback {
+  background-color: rgb(42, 42, 42);
 }
 
 .sidebyside {
@@ -121,14 +143,18 @@
 }
 
 .sidebar {
+  color: white;
   min-width: 20%;
-  background-color: gray;
+  max-width: 20%;
+  background-color: rgb(51, 51, 51);
   padding: 1%;
 }
 
 .display {
-  min-width: 80%;
-  background-color: lightgrey;
+  color: white;
+  min-width: 78%;
+
+  background-color: rgb(42, 42, 42);
 }
 
 .redback {
@@ -140,11 +166,12 @@
 }
 
 .result {
-  width:25%;
+  color: white;
+  width:23%;
   max-height: 25%;
-  background-color: gray;
+  background-color: rgb(71, 71, 71);
   margin: 0.5%;
-
+  border-radius: 10%;
 }
 
 .comment {

@@ -2,14 +2,22 @@ from flask import Flask, jsonify
 from flask import request
 import requests
 import time
-import urllib.request
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 import os
 import selenium.common.exceptions
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import firebase_admin
+from firebase_admin import storage as admin_storage, credentials, firestore
+import pyrebase
+#from pyrebase.pyrebase import storage  
+#from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -43,6 +51,27 @@ driver = webdriver.Chrome(service=Service(
 ChromeDriverManager().install()), options=options)
 # executable_path="/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/chromedriver.exe"
 # "C:\\Users\\Andrew\\Downloads\\chromedriver_win32\\chromedriver.exe"
+config = {
+  "apiKey": "AIzaSyDTht3F49SARp0XE1SyjQiTLpX_7osbYh4",
+  "authDomain": "senior-capstone-8f433.firebaseapp.com",
+  "databaseURL": "https://senior-capstone-8f433-default-rtdb.firebaseio.com",
+  "projectId": "senior-capstone-8f433",
+  "storageBucket": "senior-capstone-8f433.appspot.com",
+  "messagingSenderId": "978452685993",
+  "appId": "1:978452685993:web:5c34b8d79f2af2210e75b8"
+  }
+
+firebase_storage = pyrebase.initialize_app(config)
+storage = firebase_storage.storage()
+
+cred = credentials.Certificate('./ServiceAccountKey.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+
+captions = []
+imagePaths = []
+profileName=""
 
 
 
@@ -53,24 +82,29 @@ def download_profile(profileName):
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
     password = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+
     # enter login information
     username.clear()
     password.clear()
     username.send_keys("volter43")
     password.send_keys("11900807zD")
     # click log in and dismiss any notifications
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-    (By.CSS_SELECTOR, "button[type='submit']"))).click()
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-    (By.XPATH, "//button[contains(text(), 'Not Now')]"))).click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Not Now')]"))).click()
 
-    # goes to instagram
+    #USUAL STUFF
+
     
+    # goes to instagram
+   
     driver.get("https://www.instagram.com/" + profileName)
     posts = []
     # creates a directory named after the profile name
     if not os.path.isdir(profileName):
         os.mkdir(profileName)
+    else:
+        for f in os.listdir(profileName):
+            os.remove(os.path.join(profileName, f))
     path = os.getcwd()
     path = os.path.join(path, profileName)
 
@@ -101,7 +135,10 @@ def download_profile(profileName):
 
     image_count = 0
     dataList = []
+    i=-1
     for post in posts:
+        i=i+1
+        doc_ref = db.collection(profileName+'-posts').document(str(i))
         driver.get(post)
         time.sleep(4)
         profileData = {}
@@ -125,24 +162,65 @@ def download_profile(profileName):
             caption = comment.text
             profileData["Caption"] = caption
         dataList.append(profileData)
+    
+        
+        image = Image.open(save_as)
+
+        storage.child(profileName+"/"+profileName + str(image_count) + '.jpg').put(save_as)#profileName + str(image_count) + '.jpg'
+        imagePaths.append(profileName+"/"+profileName + str(image_count) + '.jpg')
+        #image.show()
+
+        doc_ref.set({
+        'pic':download_url,
+        'caption':caption
+        })
+        captions.append(caption)
+    
+    with open(profileName + "Captions" + '.txt', "w") as output:
+        output.write(str(captions))
+
     profileDict = {"Data": dataList}
     fileString = json.dumps(profileDict)
     jsonFile = open("data.json", "w")
     jsonFile.write(fileString)
     return profileDict
 
+#download_profile("volter43")
+
+np.savetxt(profileName+"Captions"+".txt", captions , delimiter="\t", newline = "\n", fmt="%s")
+
+if os.path.isdir(profileName):
+        for f in os.listdir(profileName):
+                imagePaths.append(profileName+"/"+f)
+print(captions)
+
 app = Flask(__name__)
 
-# Mebers API Route
-print("### Running ###")
-# results = download_profile()
-print("### Finished ###")
-print("###", "###")
-
-
-@app.route("/scrapperResults")
+@app.route("/imagePaths")
 def scrapperResults():
-    return jsonify({'results': results})
+    
+    if os.path.isdir(profileName):
+        print("PICTURE ON SERVER")
+        for f in os.listdir(profileName):
+                imagePaths.append(profileName+"/"+f)
+    return jsonify({'imagePaths': imagePaths})
+
+@app.route("/captions")
+def captionsResults():
+    if os.path.isfile(profileName+"Captions.txt"):
+        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
+        captions.extend(temp.tolist())
+    return jsonify({'captions': captions})
+
+
+@app.route("/profileUserName")
+def profileUserNameResults():
+    data = request.get_json()
+    profileName = data['username']
+    print("PROFILENAME IS " + profileName)
+    return jsonify({'profileName': profileName})
+
+
 
 results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
 @app.route("/requests", methods = ['GET','POST'])
@@ -185,5 +263,76 @@ def posts():
 
  #{1: { "path": "x/y/z", "caption":"kill", "date": "12/2/2022"}, 2:{ "path": "zz/y/z", "caption":"dog", "date": "2/34/2022"}, 3:{ "path": "zz/ysdf/z", "caption":"dosdfg", "date": "2/34/20222"}}
 
+results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
+
+@app.route("/requests", methods = ['GET','POST'])
+def requests():
+    captions.clear()
+    imagePaths.clear()
+    data = request.get_json()
+    print(type(data))
+    print(data)
+    profileName = data['username']
+    print("GIVEN NAME = ", profileName)
+    print("NEWDATA",profileName)
+
+    print("### Running ###")
+
+    
+
+    if os.path.isdir(profileName):
+        print(len(os.listdir(profileName)))
+        print("FOLDER IS HERE and NOT EMPTY")
+        for f in os.listdir(profileName):
+                imagePaths.append(profileName+"/"+f)
+    else:
+        download_profile(profileName)
+        #print("WOULD DOWNLOAD HERE")
+
+
+    if os.path.isfile(profileName+"Captions.txt"):
+        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
+        #temp[0].remove("[")
+        #temp[len(temp)-1].remove("]")
+        #for cap in temp:
+        #    cap=cap.remove("#").remove("s ")
+        captions.extend(temp.tolist())
+    print("### Finished ###")
+    
+    # data = {"posts":[
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["neckit"],
+    #     "date": ["2/3/4"]
+    # },
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["neckittt"],
+    #     "date": ["2/33/4"]
+    # },
+    # {
+    #     "path": ["/picture2"],
+    #     "caption": ["u r noob"],
+    #     "date": ["23/3/4"]
+    # }]}
+    return profileName
+    
+@app.route("/posts", methods = ['GET'])
+def posts():
+    #data = {"Data":[
+    #{
+    #    "Image": ["/picture1"],
+    #    "Caption": ["kys"],
+    #    "Date": ["2/2/2"]
+    #    }
+    #]}
+    return data
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+#auth = firebase_storage.auth()
+
+
+#user = auth.sign_in_with_email_and_password(email, password)
+#url = storage.child("/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/volter43/volter430.jpg").get_url(user['idToken'])
