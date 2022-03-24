@@ -1,7 +1,8 @@
+from typing import Mapping
 from flask import Flask, jsonify
 from flask import request
-import requests
 import time
+import sys
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -15,8 +16,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import firebase_admin
 from firebase_admin import storage as admin_storage, credentials, firestore
 import pyrebase
-#from pyrebase.pyrebase import storage  
-#from webdriver_manager.chrome import ChromeDriverManager
+from pyrebase.pyrebase import storage  
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -49,8 +50,10 @@ print("####", os.path.exists(PATH), "####")
 # os.chmod(PATH, 755)
 driver = webdriver.Chrome(service=Service(
 ChromeDriverManager().install()), options=options)
-# executable_path="/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server/chromedriver.exe"
-# "C:\\Users\\Andrew\\Downloads\\chromedriver_win32\\chromedriver.exe"
+# executable_path=".\\chromedriver.exe"
+# driver = webdriver.Chrome(executable_path)
+
+
 config = {
   "apiKey": "AIzaSyDTht3F49SARp0XE1SyjQiTLpX_7osbYh4",
   "authDomain": "senior-capstone-8f433.firebaseapp.com",
@@ -223,31 +226,6 @@ def profileUserNameResults():
 
 
 results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
-@app.route("/requests", methods = ['GET','POST'])
-def requests():
-    data = request.get_json()
-    print(type(data))
-    print(data)
-    newdata = download_profile(data['username'])
-    print(newdata)
-    
-    # data = {"posts":[
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["neckit"],
-    #     "date": ["2/3/4"]
-    # },
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["neckittt"],
-    #     "date": ["2/33/4"]
-    # },
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["u r noob"],
-    #     "date": ["23/3/4"]
-    # }]}
-    return newdata
 
 @app.route("/posts", methods = ['GET'])
 def posts():
@@ -317,16 +295,6 @@ def requests():
     # }]}
     return profileName
     
-@app.route("/posts", methods = ['GET'])
-def posts():
-    #data = {"Data":[
-    #{
-    #    "Image": ["/picture1"],
-    #    "Caption": ["kys"],
-    #    "Date": ["2/2/2"]
-    #    }
-    #]}
-    return data
 
 if __name__ == "__main__":
     app.run(debug=True)

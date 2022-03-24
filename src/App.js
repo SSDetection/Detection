@@ -490,6 +490,7 @@ console.log("captionColorArr",captionColorArr)
       <header className="App-header ">
 
         <div className="App">
+          
           <input ref={textInput} type='text' placeholder={username} id="inputBox"></input>
           <button className="white lightgreyback" onClick={() => {
             callBoth()
@@ -529,6 +530,7 @@ console.log("captionColorArr",captionColorArr)
             Interest Level: {interestText}
           </h1>
           <div class="sidebyside font10">
+          <img src = "/../flask-server/volter43/volter431.jpg"></img>
             <ul>
               <li>knives</li>
               <li>guns</li>

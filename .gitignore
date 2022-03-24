@@ -11,6 +11,9 @@
 **/firebase-debug.log
 **/ServiceAccountKey.json
 
+#venv
+flask-server/venv
+
 # testing
 /coverage
 
