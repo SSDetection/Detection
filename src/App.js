@@ -429,12 +429,27 @@ console.log("captionColorArr",captionColorArr)
     setTodos(existingTodos ? JSON.parse(existingTodos) : []);
   }, []);
 
-  // Events
-  function addTodo(event) {
-    event.preventDefault();
-    const next = [...todos, todoText.current.value];
-    setTodos(next);
-    localStorage.setItem('todos', JSON.stringify(next));
+  useEffect(() => {
+    // POST request using fetch inside useEffect React hook
+    if (username !== "@username"){
+      console.log("this shit running")
+      const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({username})
+      };
+      fetch('/requests', requestOptions)
+          .then(response => response.json())
+          .then(data => setData(data))
+          console.log(data)
+          // renderData(data);
+    }
+// this username means everytime it changes this useeffect gets run
+}, [username]);
+  
+  function callBoth(){
+    setUsername(textInput.current.value)
+    setUpdate((prevState)=> !prevState);
   }
 
   var thumbwidth = 500
@@ -475,6 +490,7 @@ console.log("captionColorArr",captionColorArr)
       <header className="App-header ">
 
         <div className="App">
+          
           <input ref={textInput} type='text' placeholder={username} id="inputBox"></input>
           <button className="white lightgreyback" onClick={() => {
             callBoth()
@@ -514,6 +530,7 @@ console.log("captionColorArr",captionColorArr)
             Interest Level: {interestText}
           </h1>
           <div class="sidebyside font10">
+          <img src = "/../flask-server/volter43/volter431.jpg"></img>
             <ul>
               <li>knives</li>
               <li>guns</li>

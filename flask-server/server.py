@@ -1,22 +1,23 @@
+from typing import Mapping
+from flask import Flask, jsonify
+from flask import request
 import time
+import sys
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import os
-import wget
-from PIL import Image
+import selenium.common.exceptions
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import firebase_admin
 from firebase_admin import storage as admin_storage, credentials, firestore
 import pyrebase
-#from pyrebase.pyrebase import storage  
-from flask import request
-from flask import Flask, jsonify
-from flask import request
-import time
-import os
-#from webdriver_manager.chrome import ChromeDriverManager
+from pyrebase.pyrebase import storage  
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -24,9 +25,33 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import json
 import wget
-import numpy as np
+import tensorflow as tf
+from PIL import Image
+import numpy as np # linear algebra
+from skimage import transform
 
+new_model = tf.keras.models.load_model('gun_model.h5')
 
+def load(filename):
+   np_image = Image.open(filename)
+   np_image = np.array(np_image).astype('float32')/255
+   np_image = transform.resize(np_image, (224, 224, 1))
+   np_image = np.expand_dims(np_image, axis=0)
+   return np_image
+
+# from selenium.webdriver.chrom.options import Options
+options = Options()
+options.add_argument("--headless")
+
+# PATH = "./chromedriver"
+PATH = "./chromedriver"
+# /Users/robertsonbrinker/Documents/GitHub/Detection/flask-server
+print("####", os.path.exists(PATH), "####")
+# os.chmod(PATH, 755)
+driver = webdriver.Chrome(service=Service(
+ChromeDriverManager().install()), options=options)
+# executable_path=".\\chromedriver.exe"
+# driver = webdriver.Chrome(executable_path)
 
 
 config = {
@@ -46,30 +71,21 @@ cred = credentials.Certificate('./ServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-chrome_options = Options()
-#chrome_options.add_argument("--headless")
-
-PATH = "./chromedriver"
-#PATH = "flask-server/chromedriver"
-#/Users/robertsonbrinker/Documents/GitHub/Detection/flask-server
-print("####",os.path.exists(PATH),"####")
-#os.chmod(PATH, 755)
 
 captions = []
 imagePaths = []
 profileName=""
 
-#https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/volter43%2Fvolter435.jpg?alt=media&token=172aaa9f-fef9-4dc6-adf0-b4ab101154ec
-#https://storage.googleapis.com/storage/v1/b/senior-capstone-8f433.appspot.com/o/volter43%2Fvolter435.jpg
-def download_profile(profileName):
 
-    imagePaths.clear()
-    captions.clear()
-    driver = webdriver.Chrome(executable_path=PATH, options=chrome_options)
+
+def download_profile(profileName):
     driver.get("https://www.instagram.com/")
 
-    username = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
-    password = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+    username = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
+    password = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+
     # enter login information
     username.clear()
     password.clear()
@@ -105,7 +121,7 @@ def download_profile(profileName):
     # scrolls to the bottom of the page
     while True:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(10)
+        time.sleep(5)
         current_height = driver.execute_script("return document.body.scrollHeight")
         links = driver.find_elements(By.TAG_NAME, "a")
         for link in links:
@@ -121,21 +137,23 @@ def download_profile(profileName):
         output.write(str(posts))
 
     image_count = 0
-    profileDict = {}
     dataList = []
     i=-1
     for post in posts:
         i=i+1
         doc_ref = db.collection(profileName+'-posts').document(str(i))
         driver.get(post)
-        time.sleep(10)
+        time.sleep(4)
         profileData = {}
         if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
             download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
-            save_as = os.path.join(path, profileName + str(image_count+1) + '.jpg')
+            save_as = os.path.join(path, profileName + str(image_count) + '.jpg')
             wget.download(download_url, save_as)
             profileData["Image"] = download_url
             image_count = image_count + 1
+            image = load(save_as)
+            num = "{:.2f}".format((new_model.predict(image)[0][0]) * 100)
+            profileData["Accuracy"] = num
 
         if driver.find_element(By.XPATH, "//time[@class='_1o9PC']") is not None:
             date = driver.find_element(By.XPATH, "//time[@class='_1o9PC']").text
@@ -147,6 +165,7 @@ def download_profile(profileName):
             caption = comment.text
             profileData["Caption"] = caption
         dataList.append(profileData)
+    
         
         image = Image.open(save_as)
 
@@ -164,7 +183,9 @@ def download_profile(profileName):
         output.write(str(captions))
 
     profileDict = {"Data": dataList}
-    print(profileDict)
+    fileString = json.dumps(profileDict)
+    jsonFile = open("data.json", "w")
+    jsonFile.write(fileString)
     return profileDict
 
 #download_profile("volter43")
@@ -176,7 +197,6 @@ if os.path.isdir(profileName):
                 imagePaths.append(profileName+"/"+f)
 print(captions)
 
-from flask import Flask, jsonify
 app = Flask(__name__)
 
 @app.route("/imagePaths")
@@ -205,9 +225,21 @@ def profileUserNameResults():
 
 
 
-@app.route("/members")
-def members():
-    return {"members": ["Member1","Member2","Member3"]}
+results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
+
+@app.route("/posts", methods = ['GET'])
+def posts():
+    data = {"Data":[
+    {
+        "Image": ["/picture1"],
+        "Caption": ["kys"],
+        "Date": ["2/2/2"]
+        }
+    ]}
+    return data
+
+
+ #{1: { "path": "x/y/z", "caption":"kill", "date": "12/2/2022"}, 2:{ "path": "zz/y/z", "caption":"dog", "date": "2/34/2022"}, 3:{ "path": "zz/ysdf/z", "caption":"dosdfg", "date": "2/34/20222"}}
 
 results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
 
@@ -263,16 +295,6 @@ def requests():
     # }]}
     return profileName
     
-@app.route("/posts", methods = ['GET'])
-def posts():
-    #data = {"Data":[
-    #{
-    #    "Image": ["/picture1"],
-    #    "Caption": ["kys"],
-    #    "Date": ["2/2/2"]
-    #    }
-    #]}
-    return data
 
 if __name__ == "__main__":
     app.run(debug=True)
