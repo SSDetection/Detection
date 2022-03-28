@@ -1,5 +1,3 @@
-import time
-
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -9,6 +7,7 @@ import os
 import wget
 
 driver = webdriver.Chrome(executable_path="C:\\Users\\Andrew\\Downloads\\chromedriver_win32\\chromedriver.exe")
+driver.implicitly_wait(10)
 driver.get("https://www.instagram.com/")
 
 username = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
@@ -44,7 +43,6 @@ def download_profile():
     # scrolls to the bottom of the page
     while True:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(5)
         current_height = driver.execute_script("return document.body.scrollHeight")
         links = driver.find_elements(By.TAG_NAME, "a")
         for link in links:
@@ -63,7 +61,6 @@ def download_profile():
     dataList = []
     for post in posts:
         driver.get(post)
-        time.sleep(4)
         profileData = {}
         if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
             download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
