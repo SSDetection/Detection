@@ -502,8 +502,6 @@ console.log("captionColorArr",captionColorArr)
 
         </div>
 
-        
-
       </header>
 
       <div class="sidebyside body">

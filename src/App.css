@@ -1,3 +1,8 @@
+.all {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 .App {
   color: white;
   text-align: center;
@@ -152,9 +157,15 @@
 
 .display {
   color: white;
-  min-width: 78%;
-
+  min-width: 80%;
+  max-height: 770px;
+  min-height: 770px;
+  overflow-y:auto;
   background-color: rgb(42, 42, 42);
+}
+
+.font {
+  font-size: 15pt;
 }
 
 .redback {
@@ -172,6 +183,26 @@
   background-color: rgb(71, 71, 71);
   margin: 0.5%;
   border-radius: 10%;
+}
+
+.margin {
+  margin: 5px;
+}
+
+.padding {
+  padding: 50px;
+}
+
+.smallpadding {
+  padding: 5px;
+}
+
+.paddingleft {
+  padding-left: 50px;
+}
+
+.marginright {
+  margin-right: 5px;
 }
 
 .comment {
