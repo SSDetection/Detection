@@ -45,10 +45,11 @@
   
 }
 
-.centercontent{
+.center{
   
   align-content: center;
-  
+  align-self: center;
+  text-align: center;
 }
 
 .App-link {
@@ -147,17 +148,30 @@
   font-size: calc(10px + 2vmin);;
 }
 
+.paddingbottom {
+  padding-bottom: 50px;
+}
+
+.grid-container {
+  display:grid;
+  column-gap: 50px;
+  row-gap: 50px;
+  grid-template-columns: 50% 50%;
+  justify-content: end;
+}
+
 .sidebar {
   color: white;
-  min-width: 20%;
-  max-width: 20%;
+  min-width: 225px;
+  max-width: 15%;
   background-color: rgb(51, 51, 51);
   padding: 1%;
+  padding-left: 4%;
 }
 
 .display {
   color: white;
-  min-width: 80%;
+  min-width: 85%;
   max-height: 770px;
   min-height: 770px;
   overflow-y:auto;

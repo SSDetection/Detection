@@ -15,10 +15,16 @@ function Findings() {
           <div class="col-lg-5">
             <h1 class="font-weight-light">About</h1>
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              over arching findings from all things such as
+            </p>
+            <p>
+            86% of participants were willing to give up privacy
+            </p>
+            <p>
+            most of participants designed something having to do with scrapping social media
+            </p>
+            <p>
+            Almost no one brought up...
             </p>
           </div>
         </div>

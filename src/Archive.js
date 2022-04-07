@@ -29,8 +29,8 @@ async function executeQuery(q) {
       //console.log(doc.id, " => ", doc.data());
       var docArr = [];
 
-      if(typeof dexDict[doc.data().question] === "undefined"){
-        dexDict[doc.data().question] = i;
+      if(typeof dexDict[doc.data().header] === "undefined"){
+        dexDict[doc.data().header] = i;
         i++;
       }
 
@@ -143,7 +143,9 @@ function Archive() {
       console.log("fax before being filtered",fax)
       terms.forEach(term => {
         unfilteredFax.forEach(doc => {
-          if ((doc.question.toLowerCase().includes(term.toLowerCase()) || doc.id.toLowerCase().includes(term.toLowerCase())) && (!filteredFax.includes(doc))){
+          if ((doc.header.toLowerCase().includes(term.toLowerCase()) || 
+          doc.text.toLowerCase().includes(term.toLowerCase())) && 
+          (!filteredFax.includes(doc))){
             filteredFax.push(doc);
           }
         });
@@ -154,8 +156,8 @@ function Archive() {
       var jaccDict = {};
       filteredFax.forEach(f => {
         //obtain jaccard's for id and question
-        var qos = calculateScore(terms, f.id.trim().replace(",","").replace(".","").replace("?","").toLowerCase().split(" "));
-        var qss = calculateScore(terms, f.question.trim().replace(",","").replace(".","").replace("?","").toLowerCase().split(" "));
+        var qos = calculateScore(terms, f.text.trim().replace(",","").replace(".","").replace("?","").toLowerCase().split(" "));
+        var qss = calculateScore(terms, f.header.trim().replace(",","").replace(".","").replace("?","").toLowerCase().split(" "));
         jaccDict[f.id]=qss+qos;
       
         
@@ -181,6 +183,7 @@ function Archive() {
     //form the nest
     const [nest, setNest] = useState({});
     const [picDict, setPicDict] = useState({});
+    const [designDict, setDesignDict] = useState({});
 
     useEffect(()=>{
       var docDict = {};
@@ -189,15 +192,15 @@ function Archive() {
       fax.forEach((doc) => {
 
         if(doc.picture){
-          tempPicDict[doc.id] = doc.url;
+          tempPicDict[doc.text] = doc.url;
           setPicDict(tempPicDict);
         }
 
-        if(typeof docDict[doc.question] === "undefined"){
-          docDict[doc.question] = [doc.id];
+        if(typeof docDict[doc.header] === "undefined"){
+          docDict[doc.header] = [doc.text];
         }
         else{
-          docDict[doc.question].push(doc.id);
+          docDict[doc.header].push(doc.text);
         }
 
       });
@@ -374,20 +377,58 @@ function Archive() {
             {(typeof nest === 'undefined') ? (
               <p>Loading...</p>
               ) : (
-              Object.keys(nest).map((question, j) => (
+              Object.keys(nest).map((header, j) => (
                 <div className="rounded lightgreyback margin padding">
-                  <h3>{question}</h3>
+                  <h3 className="center">
+                    <u><b>
+                      {header}
+                    </b></u>
+                  </h3>
 
-                  {(typeof nest[question] === 'undefined') ? (
+
+                  {(typeof nest[header] === 'undefined') ? (
                       <p>Loading...</p>
                     ) : (
-                      nest[question].map((quote, i) => (
-                        <div className="paddingleft sidebyside">
-                          <div>
-                            <li className="marginright">{quote}</li>
+                      nest[header].map((quote, i) => (
+                        <div className="grid-container paddingleft">
+                          <div className="grid-item paddingbottom">
+
+                            {(typeof quote === 'undefined') ? (
+                              <p>Loading...</p>
+                            ) : (
+                              quote.split("\\").map((section, i) => (
+                                <div>
+                                  <p className="marginright font"> 
+                                    <strong>{section.split("]")[0].split("-")[0]}</strong> - {section.split("]")[0].split("-")[1]}
+                                  </p>
+
+                                  {(typeof section === 'undefined') ? (
+                                    <p>Loading...</p>
+                                  ) : (
+                                    section.split("]").slice(1).map((subsection, i) => (
+                                      <li>
+                                        <strong>{subsection.split("-")[0]}</strong> - {subsection.split("-")[1]}
+                                      </li>
+                                     ))
+                                  )}
+                                 <br></br>
+                                 <br></br>
+                                </div>
+                              ))
+                            )}
                           </div>
-                          <img src={picDict[quote]}></img>
+                          <div>
+                          {(typeof picDict[quote] === 'undefined') ? (
+                            <p>Loading...</p>
+                          ) : (
+                            picDict[quote].map((url, i) => (
+                              <img src={url} className="grid-item paddingbottom" width="100%"></img>
+                            ))
+                          )}
+                          </div>
+                          
                         </div>
+                        
 
                       ))
                     )}
@@ -406,3 +447,15 @@ function Archive() {
 }
 
 export default Archive;
+
+/*BASIC LOOP FORMAT
+{(typeof array === 'undefined') ? (
+  <p>Loading...</p>
+) : (
+  array.map((item, i) => (
+    
+    item.whatever
+
+  ))
+)}
+*/
