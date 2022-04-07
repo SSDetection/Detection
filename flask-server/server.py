@@ -1,16 +1,17 @@
-from typing import Mapping
+
+from importlib.resources import path
+
 from flask import Flask, jsonify
 from flask import request
 import time
-import sys
+
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import os
-import selenium.common.exceptions
-from selenium.common.exceptions import NoSuchElementException
+
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import firebase_admin
@@ -23,10 +24,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-import json
+
 import wget
 import tensorflow as tf
-from PIL import Image
+
+from PIL import Image #pip install pillow
 import numpy as np # linear algebra
 from skimage import transform
 
@@ -38,6 +40,7 @@ def load(filename):
    np_image = transform.resize(np_image, (224, 224, 1))
    np_image = np.expand_dims(np_image, axis=0)
    return np_image
+
 
 # from selenium.webdriver.chrom.options import Options
 options = Options()
@@ -67,24 +70,31 @@ config = {
 firebase_storage = pyrebase.initialize_app(config)
 storage = firebase_storage.storage()
 
+auth = firebase_storage.auth()
+
+
 cred = credentials.Certificate('./ServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+user = auth.sign_in_with_email_and_password('endritzenuni112@gmail.com', 'SSDetection123!1234')
+
 
 captions = []
 imagePaths = []
-profileName=""
+
 
 
 
 def download_profile(profileName):
     driver.get("https://www.instagram.com/")
+    driver.implicitly_wait(10)
 
     username = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
     password = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+
 
     # enter login information
     username.clear()
@@ -102,14 +112,15 @@ def download_profile(profileName):
    
     driver.get("https://www.instagram.com/" + profileName)
     posts = []
+
     # creates a directory named after the profile name
     if not os.path.isdir(profileName):
         os.mkdir(profileName)
     else:
         for f in os.listdir(profileName):
             os.remove(os.path.join(profileName, f))
-    path = os.getcwd()
-    path = os.path.join(path, profileName)
+    
+    
 
     links = driver.find_elements(By.TAG_NAME, "a")
     for link in links:
@@ -133,9 +144,6 @@ def download_profile(profileName):
         previous_height = current_height
 
     posts = list(set(posts))
-    with open(profileName + "Posts" + '.txt', "w") as output:
-        output.write(str(posts))
-
     image_count = 0
     dataList = []
     i=-1
@@ -147,9 +155,17 @@ def download_profile(profileName):
         profileData = {}
         if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
             download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
-            save_as = os.path.join(path, profileName + str(image_count) + '.jpg')
+
+            # imagepath = os.path.relpath(profileName+ '/' + profileName + str(image_count) + '.jpg')
+            save_as = os.path.relpath(profileName+ '/' + profileName + str(image_count) + '.jpg')
+
             wget.download(download_url, save_as)
-            profileData["Image"] = download_url
+            firebaseimg = storage.child(profileName+"/"+profileName + str(image_count) + '.jpg')
+            firebaseimg.put(save_as)
+            firebaseimg = storage.child(profileName+"/"+profileName + str(image_count) + '.jpg')
+            url = firebaseimg.get_url(user['idToken'])
+            
+            profileData["Image"] = url
             image_count = image_count + 1
             image = load(save_as)
             num = "{:.2f}".format((new_model.predict(image)[0][0]) * 100)
@@ -166,135 +182,49 @@ def download_profile(profileName):
             profileData["Caption"] = caption
         dataList.append(profileData)
     
-        
-        image = Image.open(save_as)
 
-        storage.child(profileName+"/"+profileName + str(image_count) + '.jpg').put(save_as)#profileName + str(image_count) + '.jpg'
-        imagePaths.append(profileName+"/"+profileName + str(image_count) + '.jpg')
+        
         #image.show()
 
-        doc_ref.set({
-        'pic':download_url,
-        'caption':caption
-        })
-        captions.append(caption)
+        # doc_ref.set({
+        # 'pic':download_url,
+        # 'caption':caption
+        # })
+        # captions.append(caption)
     
-    with open(profileName + "Captions" + '.txt', "w") as output:
-        output.write(str(captions))
 
     profileDict = {"Data": dataList}
-    fileString = json.dumps(profileDict)
-    jsonFile = open("data.json", "w")
-    jsonFile.write(fileString)
+
+    # fileString = json.dumps(profileDict)
+    # jsonFile = open("../public/data.json", "w")
+    # jsonFile.write(fileString)
     return profileDict
 
-#download_profile("volter43")
-
-np.savetxt(profileName+"Captions"+".txt", captions , delimiter="\t", newline = "\n", fmt="%s")
-
-if os.path.isdir(profileName):
-        for f in os.listdir(profileName):
-                imagePaths.append(profileName+"/"+f)
-print(captions)
 
 app = Flask(__name__)
-
-@app.route("/imagePaths")
-def scrapperResults():
-    
-    if os.path.isdir(profileName):
-        print("PICTURE ON SERVER")
-        for f in os.listdir(profileName):
-                imagePaths.append(profileName+"/"+f)
-    return jsonify({'imagePaths': imagePaths})
-
-@app.route("/captions")
-def captionsResults():
-    if os.path.isfile(profileName+"Captions.txt"):
-        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
-        captions.extend(temp.tolist())
-    return jsonify({'captions': captions})
-
-
-@app.route("/profileUserName")
-def profileUserNameResults():
-    data = request.get_json()
-    profileName = data['username']
-    print("PROFILENAME IS " + profileName)
-    return jsonify({'profileName': profileName})
+def testfunc():
+    results = {'Data': [{'Image': 'zuni.115/zuni.1150.jpg', 'Accuracy': '49.86', 'Date': 'JANUARY 28', 'Caption': 'Planning on adding some attachments later #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor'}, {'Image': 'zuni.115\\zuni.1151.jpg', 'Accuracy': '43.35', 'Date': 'JANUARY 30', 'Caption': 'Finally Bought a Sig red dot for my AR from Glick-Twins. #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor #glicktwins'}, {'Image': 'zuni.115\\zuni.1152.jpg', 'Accuracy': '48.72', 'Date': 'JANUARY 28', 'Caption': 'Got a flashlight that my big bro gave me. Bout to attach this to my AR. #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor'}]}
+    return results
 
 
 
-results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
 
-@app.route("/posts", methods = ['GET'])
-def posts():
-    data = {"Data":[
-    {
-        "Image": ["/picture1"],
-        "Caption": ["kys"],
-        "Date": ["2/2/2"]
-        }
-    ]}
-    return data
-
-
- #{1: { "path": "x/y/z", "caption":"kill", "date": "12/2/2022"}, 2:{ "path": "zz/y/z", "caption":"dog", "date": "2/34/2022"}, 3:{ "path": "zz/ysdf/z", "caption":"dosdfg", "date": "2/34/20222"}}
-
-results = {"Path": "x/y/z", "Caption":"kill", "Date": "12/2/2022"}, {"Path": "x/3424y/z", "Caption":"ki43ll", "Date": "12/23/2022"}
 
 @app.route("/requests", methods = ['GET','POST'])
 def requests():
-    captions.clear()
-    imagePaths.clear()
     data = request.get_json()
     print(type(data))
     print(data)
     profileName = data['username']
-    print("GIVEN NAME = ", profileName)
-    print("NEWDATA",profileName)
-
+    
     print("### Running ###")
-
-    
-
-    if os.path.isdir(profileName):
-        print(len(os.listdir(profileName)))
-        print("FOLDER IS HERE and NOT EMPTY")
-        for f in os.listdir(profileName):
-                imagePaths.append(profileName+"/"+f)
-    else:
-        download_profile(profileName)
-        #print("WOULD DOWNLOAD HERE")
-
-
-    if os.path.isfile(profileName+"Captions.txt"):
-        temp = np.genfromtxt(profileName+"Captions.txt", dtype=str,encoding=None, delimiter="\t")
-        #temp[0].remove("[")
-        #temp[len(temp)-1].remove("]")
-        #for cap in temp:
-        #    cap=cap.remove("#").remove("s ")
-        captions.extend(temp.tolist())
+    newdata = download_profile(profileName)    
     print("### Finished ###")
+    print(newdata)
+
+    return newdata
     
-    # data = {"posts":[
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["neckit"],
-    #     "date": ["2/3/4"]
-    # },
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["neckittt"],
-    #     "date": ["2/33/4"]
-    # },
-    # {
-    #     "path": ["/picture2"],
-    #     "caption": ["u r noob"],
-    #     "date": ["23/3/4"]
-    # }]}
-    return profileName
-    
+
 
 if __name__ == "__main__":
     app.run(debug=True)
