@@ -86,6 +86,7 @@ imagePaths = []
 
 def download_profile(profileName):
     driver.get("https://www.instagram.com/")
+    driver.implicitly_wait(10)
 
     username = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))

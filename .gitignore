@@ -12,7 +12,7 @@
 **/ServiceAccountKey.json
 
 #venv
-flask-server/venv
+flask-server/venv/
 
 # testing
 /coverage
