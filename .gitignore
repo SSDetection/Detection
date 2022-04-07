@@ -5,6 +5,19 @@
 /.pnp
 .pnp.js
 
+# firebase
+**/.firebase
+**/.firebaserc
+**/firebase-debug.log
+**/ServiceAccountKey.json
+
+#venv
+
+flask-server/venv/
+
+flask-server/venv
+
+
 # testing
 /coverage
 

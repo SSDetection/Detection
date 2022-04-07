@@ -1,193 +1,242 @@
-import logo from './logo.svg';
-import { useEffect, useRef, useState } from 'react';
-import React, { Component } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
 import './App.css';
-//import * as d3 from 'd3';
-//import ScriptTag from 'react-script-tag/lib/ScriptTag';
-//import ScriptTag from 'react-script-tag';
-//import {Helmet} from "react-helmet";
+import 'firebase/storage';
+import { useEffect, useState, useRef } from 'react';
+import React from 'react';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import './App.css';
+import BarChart from "./components/BarChart";
+import { Chart } from "chart.js";
+
+
+const month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+const d = new Date();
+let currMonth = month[d.getMonth()];
+let currYear = d.getFullYear();
+
+
 
 
 function App() {
 
-  // State
-  const [todos, setTodos] = useState([]);
+  let months = { "JANUARY": 0, "FEBRUARY": 0, "MARCH": 0, "APRIL": 0, "MAY": 0, "JUNE": 0, "JULY": 0, "AUGUST": 0, "SEPTEMBER": 0, "OCTOBER": 0, "NOVEMBER": 0, "DECEMBER": 0 };
 
-  // Binding
-  const todoText = useRef();
+  const [username, setUsername] = useState('username');
+  const [data, setData] = useState();
+  const [graphData, setGraphData] = useState([months["JANUARY"], months["FEBRUARY"], months["MARCH"], months["APRIL"]]);
 
-  // Side Effects / Lifecycle
+  const [graph, setGraph] = useState({
+    labels: month,
+    datasets: [{
+      label: 'Frequency',
+      data: graphData,
+      backgroundColor: [
+        'rgba(255, 26, 104, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(0, 0, 0, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 26, 104, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(0, 0, 0, 1)'
+      ],
+      borderWidth: 1
+    }]
+  });
+
+  let textInput = React.createRef();
+
   useEffect(() => {
-    const existingTodos = localStorage.getItem('todos');
-    setTodos(existingTodos ? JSON.parse(existingTodos) : []);
-  }, []);
+    // POST request using fetch inside useEffect React hook
+    if (username !== "username") {
+      console.log("App running")
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      };
+      fetch('/requests', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          setData(data);
+          setGraphData(setMonthData(data));
+          console.log(data);
+        })
+    }
+    // this username means everytime it changes this useeffect gets run
+  }, [username]);
 
-  // Events
-  function addTodo(event) {
-    event.preventDefault();
-    const next = [...todos, todoText.current.value];
-    setTodos(next);
-    localStorage.setItem('todos', JSON.stringify(next));
+  //this little thing makes sure the useEffect below it only runs when the graphdata variable changes instead of on start as well
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+   } else {
+    setGraph({
+      labels: getMonthList(currMonth),
+      datasets: [{
+        label: 'Frequency',
+        data: graphData,
+        backgroundColor: [
+          'rgba(255, 26, 104, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(0, 0, 0, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 26, 104, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(0, 0, 0, 1)'
+        ],
+        borderWidth: 1
+      }]
+    });
+    console.log('here')
+  }
+  }, [graphData]);
+
+
+  function getMonthList(currMonth) {
+    let monthArr = []
+    let monthnum = month.indexOf(currMonth)
+    for (let i = 0; i < 6; i++) {
+      if (monthnum < 0) {
+        monthnum = 11
+      }
+      monthArr.unshift(month[monthnum])
+      monthnum -=1
+      
+    }
+    console.log(monthArr)
+    return monthArr
   }
 
-  var thumbwidth=500
+  function setMonthData(datapoints) {
+    
+    const labelsmonth = datapoints.Data.map(
+      function (index) {
+        let array = index.Date.split(' ');
+        if ((array[0] in months && array.length === 2) || array[2] === currYear) {
+          months[array[0]] = months[array[0]] + 1;
+        }
+
+        return array[0] + array[2];
+      })
+    return months
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  function changeUsername() {
+    setUsername(textInput.current.value)
+
+  }
 
   return (
-    <div >
 
-      <header className="App-header">
 
-        <form onSubmit={addTodo} align="center">
-          <input type="text" placeholder="Enter name here" ref={todoText} />
-          <input type="submit" value="Search" />
-        </form>
+    <div className="App">
+      <header className="App-header ">
 
-        <div class="carousel">
-          <Carousel thumbWidth={thumbwidth}>
-            <div>
-              <img src="https://picsum.photos/800/401/?random" />
-              <p className="legend">Pic 1</p>
-            </div>
-            <div>
-              <img src="https://picsum.photos/800/402/?random" />
-              <p className="legend">Pic 2</p>
-            </div>
-            <div>
-              <img src="https://picsum.photos/800/400/?random" />
-              <p className="legend">Pic 3</p>
-            </div>
-          </Carousel>
+
+        <div>
+
+          <input ref={textInput} type='text' placeholder="@username" id="inputBox"></input>
+
+          <button className="white lightgreyback" onClick={() => {
+            changeUsername()
+          }}>
+            Search
+          </button>
         </div>
-
-        <div className="row">
-          <div className="column">
-            <img src="https://picsum.photos/300/100/?random" />
-            <img src="https://picsum.photos/300/200/?random" />
-            <img src="https://picsum.photos/300/300/?random" />
-            <img src="https://picsum.photos/300/400/?random" />
-            <img src="https://picsum.photos/300/301/?random" />
-            <img src="https://picsum.photos/300/201/?random" />
-            <img src="https://picsum.photos/300/101/?random" />
-          </div>
-          <div className="column">
-            <img src="https://picsum.photos/300/104/?random" />
-            <img src="https://picsum.photos/300/204/?random" />
-            <img src="https://picsum.photos/300/304/?random" />
-            <img src="https://picsum.photos/300/402/?random" />
-            <img src="https://picsum.photos/300/302/?random" />
-            <img src="https://picsum.photos/300/202/?random" />
-            <img src="https://picsum.photos/300/102/?random" />
-          </div>
-        </div>
-
-        <ul>
-          {todos.map(todo => (<li key={todo}>{todo}</li>))}  
-        </ul>
-        
       </header>
 
-      <div class="summary">
-        <div>
-          <h1 class="green">Interest Level : Low</h1>
-          <p>A low interest level indicates a lack of the presence of these things on a user's instagram profile:</p>
-          <div class="sidebyside">
+      <div className="sidebyside body">
+        {/* Side Bar */}
+        <div className="sidebar">
+          <h1 id="usernameHeader">@{username}</h1>
+          <h1 className='interestColor'>
+            Interest Level: NULL
+          </h1>
+
+          <div className="sidebyside font10">
+
             <ul>
               <li>knives</li>
               <li>guns</li>
               <li>threatening speech</li>
             </ul>
             <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>1 potential appearence(s)</li>
+              <li>1 potential</li>
+              <li>2 potential</li>
+              <li>3 potential</li>
             </ul>
           </div>
+
+          <div>
+            <BarChart chartData={graph} />
+          </div>
+
+
+          <h6>Percentage of Gun Posts for @{username}</h6>
+
+
+
+          <div id="d3-container" className="midgreyback">
+            <h6># of Posts Over Time</h6>
+            
+
+          </div>
         </div>
-        <div>
-          <img src="https://picsum.photos/300/299/?random"/>
-          <p># of posts vs time</p>
-        </div>
-        <div>
-          <form action="/action_page.php">
-            <label for="cars">Sort Posts by</label>
-              <select name="cars" id="cars">
-                <optgroup label="Sorting Options">
-                  <option value="Latest Posts">Latest Posts</option>
-                  <option value="Score">Score</option>
-                </optgroup>
-              </select>
-              <br></br>
-              <input type="submit" value="Sort"></input>
-          </form>
+
+
+
+        <div className="display darkgreyback">
+
+          {data && (
+            <>
+
+              <div className="lightlightgrey">
+
+                {data.Data.map(post => <div className="lightgreyback">
+                  <img className="card_image" src={post.Image} width="200" height="200"></img>
+                  <p>{post.Caption}</p>
+                  <p>{post.Date}</p>
+                </div>)}
+              </div>
+            </>
+
+          )
+          }
+
         </div>
       </div>
-
-      <div class="summary">
-        <div>
-          <img src="https://picsum.photos/300/301/?random" />
-        </div>
-        <div>
-          <h1>@username</h1>
-          <p>this is where the user bio is displayed where <span class="red">aggresive</span> words are colored</p>
-          <div class="sidebyside">
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>1 potential appearence(s)</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-            <h1>+1</h1>
-          </div>
-      </div>
-
-      <div class="summary">
-        <div>
-          <img src="https://picsum.photos/300/300/?random" />
-        </div>
-        <div>
-          <h1>caption:</h1>
-          <p>Can you believe I caught this on camera!</p>
-          <div class="sidebyside">
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-              <li>0 potential appearence(s)</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-            <h1>+0</h1>
-          </div>
-      </div>
-
-
-      {/* GRAPH STUFF 
-      <div>
-      
-        <div style={{float: 'center'}}>
-          <h1>Percentage of Posts with Guns</h1>
-          <div id="d3-container" />
-          <Helmet>
-            <script type="text/javascript" src="Graph.js"></script>
-          </Helmet>
-        </div>
-       
-      </div>*/}
-
     </div>
   );
 }
