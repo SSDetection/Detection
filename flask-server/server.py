@@ -1,3 +1,4 @@
+
 from importlib.resources import path
 
 from flask import Flask, jsonify
@@ -26,6 +27,7 @@ from selenium.webdriver.chrome.options import Options
 
 import wget
 import tensorflow as tf
+
 from PIL import Image #pip install pillow
 import numpy as np # linear algebra
 from skimage import transform
@@ -38,6 +40,7 @@ def load(filename):
    np_image = transform.resize(np_image, (224, 224, 1))
    np_image = np.expand_dims(np_image, axis=0)
    return np_image
+
 
 # from selenium.webdriver.chrom.options import Options
 options = Options()
@@ -91,6 +94,7 @@ def download_profile(profileName):
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
     password = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+
 
     # enter login information
     username.clear()
@@ -151,8 +155,10 @@ def download_profile(profileName):
         profileData = {}
         if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
             download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
+
             # imagepath = os.path.relpath(profileName+ '/' + profileName + str(image_count) + '.jpg')
             save_as = os.path.relpath(profileName+ '/' + profileName + str(image_count) + '.jpg')
+
             wget.download(download_url, save_as)
             firebaseimg = storage.child(profileName+"/"+profileName + str(image_count) + '.jpg')
             firebaseimg.put(save_as)
@@ -176,8 +182,7 @@ def download_profile(profileName):
             profileData["Caption"] = caption
         dataList.append(profileData)
     
-        
-        
+
         
         #image.show()
 
@@ -189,15 +194,19 @@ def download_profile(profileName):
     
 
     profileDict = {"Data": dataList}
+
     # fileString = json.dumps(profileDict)
     # jsonFile = open("../public/data.json", "w")
     # jsonFile.write(fileString)
     return profileDict
 
+
 app = Flask(__name__)
 def testfunc():
     results = {'Data': [{'Image': 'zuni.115/zuni.1150.jpg', 'Accuracy': '49.86', 'Date': 'JANUARY 28', 'Caption': 'Planning on adding some attachments later #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor'}, {'Image': 'zuni.115\\zuni.1151.jpg', 'Accuracy': '43.35', 'Date': 'JANUARY 30', 'Caption': 'Finally Bought a Sig red dot for my AR from Glick-Twins. #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor #glicktwins'}, {'Image': 'zuni.115\\zuni.1152.jpg', 'Accuracy': '48.72', 'Date': 'JANUARY 28', 'Caption': 'Got a flashlight that my big bro gave me. Bout to attach this to my AR. #palmettostatearmory #guns #cz #9mm #ar #ar15 #czp07 #556nato #leapoldoptics #rifles #suppressor'}]}
     return results
+
+
 
 
 
@@ -215,6 +224,7 @@ def requests():
 
     return newdata
     
+
 
 if __name__ == "__main__":
     app.run(debug=True)

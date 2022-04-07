@@ -152,8 +152,10 @@ function App() {
 
 
 
+
   function changeUsername() {
     setUsername(textInput.current.value)
+
   }
 
   return (
@@ -162,9 +164,11 @@ function App() {
     <div className="App">
       <header className="App-header ">
 
+
         <div>
 
           <input ref={textInput} type='text' placeholder="@username" id="inputBox"></input>
+
           <button className="white lightgreyback" onClick={() => {
             changeUsername()
           }}>
@@ -180,7 +184,9 @@ function App() {
           <h1 className='interestColor'>
             Interest Level: NULL
           </h1>
+
           <div className="sidebyside font10">
+
             <ul>
               <li>knives</li>
               <li>guns</li>
