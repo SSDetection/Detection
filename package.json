@@ -1,6 +1,6 @@
 {
   "name": "detection",
-  "homepage": "https://senior-capstone-8f433.web.app/",
+  "homepage": "https://seniorproject2022.herokuapp.com/",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5000",
