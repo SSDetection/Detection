@@ -1,17 +1,16 @@
 from importlib.resources import path
-from typing import Mapping
+
 from flask import Flask, jsonify
 from flask import request
 import time
-import sys
+
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 import os
-import selenium.common.exceptions
-from selenium.common.exceptions import NoSuchElementException
+
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import firebase_admin
@@ -24,10 +23,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-import json
+
 import wget
 import tensorflow as tf
-from PIL import Image
+from PIL import Image #pip install pillow
 import numpy as np # linear algebra
 from skimage import transform
 
