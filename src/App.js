@@ -64,7 +64,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
       };
-      fetch('/requests', requestOptions)
+      fetch('https://seniorproject2022.herokuapp.com/requests', requestOptions)
         .then(response => response.json())
         .then(data => {
           setData(data);
