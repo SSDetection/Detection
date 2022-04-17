@@ -6,7 +6,7 @@ import React from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import './App.css';
 import BarChart from "./components/BarChart";
-import { Chart } from "chart.js";
+//import { Chart } from "chart.js";
 
 
 const month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
@@ -199,10 +199,11 @@ function App() {
             </ul>
           </div>
 
-          <div>
-            <BarChart chartData={graph} />
-          </div>
-
+          {
+          //<div>
+          //  <BarChart chartData={graph} />
+          //</div>
+          }
 
           <h6>Percentage of Gun Posts for @{username}</h6>
 
