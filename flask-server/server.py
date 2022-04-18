@@ -32,12 +32,12 @@ from PIL import Image #pip install pillow
 import numpy as np # linear algebra
 from skimage import transform
 
-new_model = tf.keras.models.load_model('gun_model.h5')
+new_model = tf.keras.models.load_model('VGGV2_NoAugment.h5')
 
 def load(filename):
    np_image = Image.open(filename)
    np_image = np.array(np_image).astype('float32')/255
-   np_image = transform.resize(np_image, (224, 224, 1))
+   np_image = transform.resize(np_image, (224, 224, 3))
    np_image = np.expand_dims(np_image, axis=0)
    return np_image
 
@@ -164,11 +164,13 @@ def download_profile(profileName):
             firebaseimg.put(save_as)
             firebaseimg = storage.child(profileName+"/"+profileName + str(image_count) + '.jpg')
             url = firebaseimg.get_url(user['idToken'])
-            
             profileData["Image"] = url
             image_count = image_count + 1
             image = load(save_as)
+            num = (new_model.predict(image))
+            print(num)
             num = "{:.2f}".format((new_model.predict(image)[0][0]) * 100)
+            
             profileData["Accuracy"] = num
 
         if driver.find_element(By.XPATH, "//time[@class='_1o9PC']") is not None:
@@ -176,8 +178,8 @@ def download_profile(profileName):
             profileData["Date"] = date
 
         if driver.find_element(By.XPATH, ".//span[@class = '']") is not None:
-            comment = driver.find_element(By.XPATH, "//div[@class='C4VMK']//span[@class='_7UhW9   xLCgt      MMzan   "
-                                                    "KV-D4           se6yk       T0kll ']")
+            comment = driver.find_element(By.XPATH, "//span[@class = '_7UhW9   xLCgt      MMzan   KV-D4            "
+                                                    "se6yk       T0kll ']")
             caption = comment.text
             profileData["Caption"] = caption
         dataList.append(profileData)
