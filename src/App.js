@@ -64,7 +64,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
       };
-      fetch('/requests', requestOptions)
+      fetch('http://68.183.136.191:5000/requests', requestOptions)
         .then(response => response.json())
         .then(data => {
           setData(data);
@@ -229,6 +229,7 @@ function App() {
                   <img className="card_image" src={post.Image} width="200" height="200"></img>
                   <p>{post.Caption}</p>
                   <p>{post.Date}</p>
+                  <p>Model Confidence: {post.Accuracy}%</p>
                 </div>)}
               </div>
             </>
