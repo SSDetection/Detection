@@ -22,7 +22,7 @@ flask-server/venv
 /coverage
 
 # production
-/build
+
 
 # misc
 .DS_Store
