@@ -6,7 +6,7 @@ import React from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import './App.css';
 import BarChart from "./components/BarChart";
-import { Chart } from "chart.js";
+//import { Chart } from "chart.js";
 
 
 const month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
@@ -64,7 +64,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
       };
-      fetch('https://seniorproject2022.herokuapp.com/requests', requestOptions)
+      fetch('http://68.183.136.191:5000/requests', requestOptions)
         .then(response => response.json())
         .then(data => {
           setData(data);
@@ -199,10 +199,11 @@ function App() {
             </ul>
           </div>
 
-          <div>
-            <BarChart chartData={graph} />
-          </div>
-
+          {
+          //<div>
+          //  <BarChart chartData={graph} />
+          //</div>
+          }
 
           <h6>Percentage of Gun Posts for @{username}</h6>
 
@@ -228,6 +229,7 @@ function App() {
                   <img className="card_image" src={post.Image} width="200" height="200"></img>
                   <p>{post.Caption}</p>
                   <p>{post.Date}</p>
+                  <p>Model Confidence: {post.Accuracy}%</p>
                 </div>)}
               </div>
             </>
