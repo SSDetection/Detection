@@ -4,10 +4,11 @@ import { NavLink } from "react-router-dom";
 function Navigation() {
   return (
     <div className="navigation">
-      <nav className="navbar navbar-expand navbar-dark bg-dark">
+      <nav className="navbar navbar-expand navbar-dark presblue">
         <div className="container">
           <NavLink className="navbar-brand" to="/">
-            OUrchive
+          <img src="logoOU.png" width="40" height = "40"></img>
+          rchive
           </NavLink>
           <div>
             <ul className="navbar-nav ml-auto">
