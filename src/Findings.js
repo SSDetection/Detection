@@ -12,20 +12,32 @@ function Findings() {
               alt=""
             />
           </div>
-          <div class="col-lg-5">
-            <h1 class="font-weight-light">About</h1>
+          <div >{/*class="col-lg-5"*/}
+            <h1>Recurring Values</h1>
             <p>
-              over arching findings from all things such as
+            <strong>Privacy: </strong>Most stakeholders were willing to sacrifice privacy for the greater good, so long as the data collected isn’t public information.
             </p>
             <p>
-            86% of participants were willing to give up privacy
+            <strong>Data in the “Right Hands”: </strong>If data is going to be collected and available, it should only be accessible by law enforcement or school administrators.
             </p>
             <p>
-            most of participants designed something having to do with scrapping social media
+            <strong>Mental Health Improvements: </strong>Many felt that there needed to be greater support for mental health at schools through counselors. 
+            </p>
+          
+            <br></br>
+            <br></br>
+
+            <h1>Notable Designs</h1>
+            <p>
+            <strong>Social Media Scraper: </strong>The most common design was an AI that constantly scans social media profiles to detect warning signs.
             </p>
             <p>
-            Almost no one brought up...
+            <strong>Tangible Solution: </strong>Metal detector, secure vestebules, etc.  A participant suggested using a metal detector esque system to scan backpacks to detect weapons.
             </p>
+            <p>
+            <strong>Culture Changes: </strong>More counselors, put the “Bible back in the home” one participant said–multiple participants felt that the issue could be fixed through improving the support system for students at schools.
+            </p>
+ 
           </div>
         </div>
       </div>
