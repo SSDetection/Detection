@@ -199,11 +199,9 @@ function App() {
             </ul>
           </div>
 
-          {
-          //<div>
-          //  <BarChart chartData={graph} />
-          //</div>
-          }
+          
+          
+          
 
           <h6>Percentage of Gun Posts for @{username}</h6>
 
@@ -211,7 +209,9 @@ function App() {
 
           <div id="d3-container" className="midgreyback">
             <h6># of Posts Over Time</h6>
-            
+              <div>
+                <BarChart chartData={graph} />
+              </div>
 
           </div>
         </div>
