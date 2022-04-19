@@ -1,3 +1,8 @@
+.all {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 .App {
   color: white;
   text-align: center;
@@ -15,8 +20,8 @@
 }
 
 .App-header {
-  background-color: rgb(51, 51, 51);
-
+  background-color: rgb(33, 33, 33);
+  
   /*
   min-height: 100vh;
   display: flex;
@@ -31,19 +36,20 @@
   justify-content: end;
 }
 
-.center {
-
+.center{
+  
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 50%;
-
+  
 }
 
-.centercontent {
-
+.center{
+  
   align-content: center;
-
+  align-self: center;
+  text-align: center;
 }
 
 .App-link {
@@ -68,24 +74,23 @@
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
 }
 
 .carousel {
-
+  
   padding: 1%;
   max-width: 99%;
 }
 
 .green {
-  color: rgb(103, 203, 100)
+  color: rgb(103,203,100)
 }
 
 .red {
-  color: rgb(244, 121, 110)
+  color: rgb(244,121,110)
 }
 
 .orange {
@@ -96,56 +101,21 @@
   color: white
 }
 
-.lightlightgrey {
-  margin: 0 auto;
-  margin-bottom: 20%;
-  max-width: 1000px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  grid-auto-rows: auto;
-  gap: 20px;
-  font-family: sans-serif;
-  padding-top: 20px;
-  color: rgb(252, 252, 252)
-}
-
-.card__image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  display: block;
-  border-top: 2px solid #333333;
-  border-right: 2px solid #333333;
-  border-left: 2px solid #333333;
+.lightlightgrey{
+  color:rgb(101, 101, 101)
 }
 
 .lightgreyback {
-  line-height: 1.5;
-  font-size: 0.9em;
-  padding: 15px;
-  padding-bottom: 1px;
-  border-right: 2px solid #333333;
-  border-left: 2px solid #333333;
-  background-color: rgb(71, 71, 71);
+  background-color: rgb(54, 54, 54);
   box-shadow: none;
-
-}
-.lightgreyback > p:first-of-type {
-  margin-top: 0;
-}
-
-.lightgreyback > p:last-of-type {
-  margin-bottom: 0;
 }
 
 .midgreyback {
-  background-color: rgb(51, 51, 51);
+  background-color: rgb(33, 33, 33);
 }
 
 .darkgreyback {
-  display: flex;
-  flex-direction: row;
-  background-color: rgb(42, 42, 42);
+  background-color: rgb(26, 26, 26);
 }
 
 .sidebyside {
@@ -154,37 +124,47 @@
 
 .summary {
   color: white;
-  background-color: grey;
+  background-color:grey;
   margin: 1%;
   padding: 1%;
   font-size: calc(10px + 2vmin);
-  display: grid;
+  display:grid;
   grid-template-columns: 5fr 5fr 1fr;
 }
 
 .bio {
   color: white;
-  background-color: grey;
+  background-color:grey;
   margin: 2%;
   padding: 2%;
-  font-size: calc(10px + 2vmin);
-  ;
+  font-size: calc(10px + 2vmin);;
 }
 
 .post {
   color: white;
-  background-color: grey;
+  background-color:grey;
   margin: 2%;
   padding: 2%;
-  font-size: calc(10px + 2vmin);
-  ;
+  font-size: calc(10px + 2vmin);;
+}
+
+.paddingbottom {
+  padding-bottom: 50px;
+}
+
+.grid-container {
+  display:grid;
+  column-gap: 50px;
+  row-gap: 50px;
+  grid-template-columns: 50% 50%;
+  justify-content: end;
 }
 
 .sidebar {
   color: white;
   min-width: 15%;
   max-width: 15%;
-  background-color: rgb(51, 51, 51);
+  background-color: rgb(33, 33, 33);
   padding: 1%;
   padding-left: 4%;
 }
@@ -196,7 +176,11 @@
   /*max-height: 770px;*/
   height:100vh;
   overflow-y:auto;
-  background-color: rgb(42, 42, 42);
+  background-color: rgb(26, 26, 26);
+}
+
+.font {
+  font-size: 15pt;
 }
 
 .redback {
@@ -209,11 +193,31 @@
 
 .result {
   color: white;
-  width: 23%;
+  width:23%;
   max-height: 25%;
-  background-color: rgb(71, 71, 71);
+  background-color: rgb(54, 54, 54);
   margin: 0.5%;
   border-radius: 10%;
+}
+
+.margin {
+  margin: 5px;
+}
+
+.padding {
+  padding: 50px;
+}
+
+.smallpadding {
+  padding: 5px;
+}
+
+.paddingleft {
+  padding-left: 50px;
+}
+
+.marginright {
+  margin-right: 5px;
 }
 
 .comment {
@@ -224,5 +228,19 @@
 
 .analysis {
   text-align: center;
+
+}
+
+.presblue {
+  background:rgb(58, 71, 78)
+}
+
+.smalllrmargin {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.nomaxwidth {
+  max-width: 100%;
 
 }
