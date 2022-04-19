@@ -5,7 +5,7 @@ function Navigation() {
   return (
     <div className="navigation">
       <nav className="navbar navbar-expand navbar-dark presblue">
-        <div className="container">
+        <div className="container smalllrmargin nomaxwidth">
           <NavLink className="navbar-brand" to="/">
           <img src="logoOU.png" width="40" height = "40"></img>
           rchive
@@ -29,8 +29,8 @@ function Navigation() {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/blog">
-                  Blog
+                <NavLink className="nav-link" to="/submit">
+                  Submit
                 </NavLink>
               </li>
             </ul>

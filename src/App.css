@@ -233,3 +233,13 @@
 .presblue {
   background:rgb(58, 71, 78)
 }
+
+.smalllrmargin {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.nomaxwidth {
+  max-width: 100%;
+
+}
