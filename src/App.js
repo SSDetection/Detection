@@ -165,14 +165,14 @@ function App() {
       <header className="App-header ">
 
 
-        <div>
+        <div className = "smallpadding App">
 
-          <input ref={textInput} type='text' placeholder="@username" id="inputBox"></input>
+          <input ref={textInput} type='text' placeholder="@username" id="inputBox" className="marginright"></input>
 
           <button className="white lightgreyback" onClick={() => {
             changeUsername()
           }}>
-            Search
+            search
           </button>
         </div>
       </header>
@@ -181,11 +181,11 @@ function App() {
         {/* Side Bar */}
         <div className="sidebar">
           <h1 id="usernameHeader">@{username}</h1>
-          <h1 className='interestColor'>
+          <h2 className='interestColor'>
             Interest Level: NULL
-          </h1>
+          </h2>
 
-          <div className="sidebyside font10">
+          <div className="sidebyside font10 negativepadding">
 
             <ul>
               <li>knives</li>
