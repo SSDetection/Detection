@@ -6,6 +6,7 @@ import React from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import './App.css';
 import BarChart from "./components/BarChart";
+import PieChart from "./components/PieChart";
 import Chart from 'chart.js/auto';
 
 
@@ -25,12 +26,40 @@ function App() {
   const [username, setUsername] = useState('username');
   const [data, setData] = useState();
   const [graphData, setGraphData] = useState([months["JANUARY"], months["FEBRUARY"], months["MARCH"], months["APRIL"]]);
+  const [pieData, setPieData] = useState([])
 
   const [graph, setGraph] = useState({
     labels: month,
     datasets: [{
       label: 'Frequency',
       data: graphData,
+      backgroundColor: [
+        'rgba(255, 26, 104, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(0, 0, 0, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 26, 104, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(0, 0, 0, 1)'
+      ],
+      borderWidth: 1
+    }]
+  });
+
+  const [pieChart, setPieChart] = useState({
+    labels: ['Yes', 'No'],
+    datasets: [{
+      label: 'Frequency',
+      data: pieData,
       backgroundColor: [
         'rgba(255, 26, 104, 0.2)',
         'rgba(54, 162, 235, 0.2)',
@@ -69,7 +98,9 @@ function App() {
         .then(data => {
           setData(data);
           setGraphData(setMonthData(data));
+          setPieData(getAccuracyList(data));
           console.log(data);
+          console.log(pieData);
         })
     }
     // this username means everytime it changes this useeffect gets run
@@ -108,9 +139,42 @@ function App() {
         borderWidth: 1
       }]
     });
-    console.log('here')
   }
   }, [graphData]);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+   } else {
+    setPieChart({
+      labels: ["Yes","No"],
+      datasets: [{
+        label: 'Frequency',
+        data: pieData,
+        backgroundColor: [
+          'rgba(255, 26, 104, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(0, 0, 0, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 26, 104, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(0, 0, 0, 1)'
+        ], 
+        borderWidth: 1
+      }]
+    });
+    console.log('here')
+  }
+  }, [pieData]);
 
 
   function getMonthList(currMonth) {
@@ -126,6 +190,25 @@ function App() {
     }
     console.log(monthArr)
     return monthArr
+  }
+
+  function getAccuracyList(datapoints){
+    let yes = 0;
+    let no = 0;
+    const yesorno = datapoints.Data.map(
+      function (index) {
+        let array = index.Accuracy[0];
+        if  (array[0] >= 80) {
+          yes++;
+        }
+        else{
+          no++;
+        }
+
+        return [yes, no];
+      }
+    )
+    return [yes, no];
   }
 
   function setMonthData(datapoints) {
@@ -181,29 +264,16 @@ function App() {
         {/* Side Bar */}
         <div className="sidebar">
           <h1 id="usernameHeader">@{username}</h1>
-          <h2 className='interestColor'>
-            Interest Level: NULL
-          </h2>
 
-          <div className="sidebyside font10 negativepadding">
-
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>1 potential</li>
-              <li>2 potential</li>
-              <li>3 potential</li>
-            </ul>
-          </div>
 
           
           
           
 
           <h6>Percentage of Gun Posts for @{username}</h6>
+            <div>
+              <PieChart chartData={pieChart}/>
+            </div>
 
 
 
@@ -218,14 +288,14 @@ function App() {
 
 
 
-        <div className="display darkgreyback">
+        <div className="display darkgreybackcard">
 
           {data && (
             <>
 
-              <div className="lightlightgrey">
+              <div className="lightlightgreycard">
 
-                {data.Data.map(post => <div className="lightgreyback">
+                {data.Data.map(post => <div className="lightgreybackcard">
                   <img className="card_image" src={post.Image} width="200" height="200"></img>
                   <p>{post.Caption}</p>
                   <p>{post.Date}</p>
