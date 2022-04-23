@@ -142,17 +142,6 @@ function App() {
     return months
   }
 
-
-
-
-
-
-
-
-
-
-
-
   function changeUsername() {
     setUsername(textInput.current.value)
 
@@ -236,6 +225,15 @@ function App() {
 
           )
           }
+
+          <div className="lightlightgrey">
+            <div className="lightgreyback">
+              <img className="card_image" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FBenPic.jpg?alt=media&token=ee326d9c-4674-4747-bc27-7f5033b40280" width="200" height="200"></img>
+              <p><font color="green">post.Caption</font></p>
+              <p>post.Date</p>
+              <p>Model Confidence: post.Accuracy%</p>
+            </div>
+          </div>
 
         </div>
       </div>
