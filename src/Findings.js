@@ -61,7 +61,7 @@ When asked who should have access to any alerts or data from a potential social 
             <p>
             <strong>Sentiment Analysis with Facial Recognition:</strong>An AI conducts a sentiment analysis of not only the text of a student's social media account but the colors and their face, seeing if they appear happy or not.  This idea was proposed earlier in the porject os no picture is available.  A number of particpants have brought up the role color could play in AI detecting threats, though other students fear that this could lead to prejudice due to humans having a wide range of skin colors.  Model training would need to be especially careful to have a waide range of subjects.  
             </p>
-            <img width="400" ></img>
+            <img width="400" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FScreen%20Shot%202022-04-18%20at%203.24.45%20PM.png?alt=media&token=a32db114-dcc0-474f-97a7-feae16dec3bf"></img>
           </div>
         </div>
       </div>
