@@ -106,18 +106,21 @@ function Archive() {
         artifact: "link_to_url_of_pic_here" });
     */
 
+
+
+
+
     const [q, setQ] = useState(query(archiveRef, where("quote","in",[true, false])));
     console.log("query crafted", q);
 
     const [quotesChecked, setQuotesChecked] = useState(true);
     const [picturesChecked, setPicturesChecked] = useState(true);
-
-    const [studentsChecked, setStudentsChecked] = useState(false);
-    const [parentsChecked, setParentsChecked] = useState(false);
-    const [administrationChecked, setAdministrationChecked] = useState(false);
-    const [counselorsChecked, setCounselorsChecked] = useState(false);
-    const [policeChecked, setPoliceChecked] = useState(false);
-    const [technologistsChecked, setTechnologistsChecked] = useState(false);
+    const [studentsChecked, setStudentsChecked] = useState(true);
+    const [parentsChecked, setParentsChecked] = useState(true);
+    const [administrationChecked, setAdministrationChecked] = useState(true);
+    const [counselorsChecked, setCounselorsChecked] = useState(true);
+    const [policeChecked, setPoliceChecked] = useState(true);
+    const [technologistsChecked, setTechnologistsChecked] = useState(true);
 
     const [fax, setFax] = useState([]);
     const [unfilteredFax, setUnfilteredFax] = useState([]);
@@ -275,29 +278,20 @@ function Archive() {
       if(temptechnologists){
         includedRoles.push("technologist");
       }
+      console.log("ROLES", includedRoles)
 
-      console.log(tempstudent,tempparent,tempadministration,tempcounselors,temppolice,temptechnologists)
-      //console.log("ROLES", includedRoles)
-      
       //accounting for how compound queries are logical AND
-      if (!tempstudent&&!tempparent&&!tempadministration&&!tempcounselors&&!temppolice&&!temptechnologists){
-        setQ(query(archiveRef, where("quote","in",[true, false])));
-      }
-      else if (!tempquote && temppicture){
-        setQ(query(archiveRef,where("picture","==",true), 
-                            where("role","in",includedRoles)));
-      }
-
       if (tempquote && temppicture){
         setQ(query(archiveRef,where("role","in",includedRoles)));
       }
-
       if (tempquote && !temppicture){
         setQ(query(archiveRef,where("quote","==",true), 
                             where("role","in",includedRoles)));
       }
-
-      
+      if (!tempquote && temppicture){
+        setQ(query(archiveRef,where("picture","==",true), 
+                            where("role","in",includedRoles)));
+      }
       if (!tempquote && !temppicture){
         setQ(query(archiveRef,where("quote","==",false), 
                             where("picture","==",false), 
@@ -306,15 +300,8 @@ function Archive() {
 
     };
 
-    /*useEffect(()=>{
-      var inputs = document.getElementsByTagName('input');
 
-      for (var i=0; i<inputs.length; i++)  {
-        if (inputs[i].type == 'checkbox')   {
-          inputs[i].checked = false;
-        }
-      }
-    },[]);*/
+
 
   return (
 
@@ -328,6 +315,10 @@ function Archive() {
                 search
               </button>
 
+
+
+
+
             </div>
 
           </header>
@@ -337,50 +328,46 @@ function Archive() {
             {/* Side Bar */}
             <div className="sidebar">
 
-                {/*
                 <h3>Media</h3>
-                <input className="marginright" type="checkbox" id="quotesCB" defaultChecked="false" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="quotesCB" defaultChecked="true" onClick={(e) => {updateQuery(e);}}></input>
                 <label for="quotesCB"> Quotes</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="picturesCB" onClick={(e) => {updateQuery(e);}} defaultChecked="false"></input>
+                <input className="marginright" type="checkbox" id="picturesCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="picturesCB"> Pictures</label>
 
                 <br></br>
                 <br></br>
-                */}
 
                 <h3>Roles</h3>
-                <input className="marginright" type="checkbox" id="studentsCB" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="studentsCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="studentsCB"> Students</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="parentsCB" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="parentsCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="parentsCB"> Parents</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="administrationCB" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="administrationCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="administrationCB"> Administration</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="counselorsCB" onClick={(e) => {updateQuery(e);}}></input>
-                <label for="counselorsCB"> Counselors</label>
+                <input className="marginright" type="checkbox" id="conselorsCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
+                <label for="conselorsCB"> Counselors</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="policeCB" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="policeCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="policeCB"> Police</label>
 
                 <br></br>
-                <input className="marginright" type="checkbox" id="technologistsCB" onClick={(e) => {updateQuery(e);}}></input>
+                <input className="marginright" type="checkbox" id="technologistsCB" onClick={(e) => {updateQuery(e);}} defaultChecked="true"></input>
                 <label for="technologistsCB"> Technologists</label>
 
-                {/*
                 <br></br>
-                <input className="marginright" type="checkbox" id="otherCB" name="otherCB" value="otherCB" defaultChecked="false"></input>
+                <input className="marginright" type="checkbox" id="otherCB" name="otherCB" value="otherCB" defaultChecked="true"></input>
                 <label for="otherCB"> Other</label>
 
                 <br></br>
-                */}
             </div>
 
             {/* Main */}
@@ -432,7 +419,7 @@ function Archive() {
                           </div>
                           <div>
                           {(typeof picDict[quote] === 'undefined') ? (
-                            <p></p>
+                            <p>Loading...</p>
                           ) : (
                             picDict[quote].map((url, i) => (
                               <img src={url} className="grid-item paddingbottom" width="100%"></img>
