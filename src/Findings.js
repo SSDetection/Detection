@@ -42,7 +42,7 @@ When asked who should have access to any alerts or data from a potential social 
 <br></br>
 <br></br>
 <em>
-“I want more counselors for sure.  And that information should defineitly go to counselors.”
+“I want more counselors for sure...and that information should defineitly go to counselors.”
 </em>
            </p>
           
@@ -51,17 +51,17 @@ When asked who should have access to any alerts or data from a potential social 
 
             <h1>Notable Designs</h1>
             <p>
-            <strong>Social Media Scraper: </strong>The most common design was an AI that constantly scans social media profiles to detect warning signs.
+            <strong>Social Media Scraper: </strong>The most common design is an AI that constantly scans social media profiles to detect warning signs.  Surprisingly most people are ok with this in one way or another are even suggest it.  
             </p>
             <img width="400" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FBrendanFraser.png?alt=media&token=4187760d-53a5-46f2-a529-d9c4fe60af5a"></img>
             <p>
-            <strong>Tangible Solution: </strong>Metal detector, secure vestebules, etc.  A participant suggested using a metal detector esque system to scan backpacks to detect weapons.
+            <strong>Hardware Solutions using AI: </strong>Multiple participants said they would feel safer and actually wanted everyone to go through a metal detector that uses AI to identify weapons in people's backpacks.  This is similar to a TSA security system, but more than one particpant wanted this to be a daily procedure at schools.
             </p>
             <img width="400" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FMetal%20Detector.png?alt=media&token=fc9fbb8b-0e4b-468c-a655-c32fc568fb06"></img>
             <p>
-            <strong>Culture Changes: </strong>More counselors, put the “Bible back in the home” one participant said–multiple participants felt that the issue could be fixed through improving the support system for students at schools.
+            <strong>Sentiment Analysis with Facial Recognition:</strong>An AI conducts a sentiment analysis of not only the text of a student's social media account but the colors and their face, seeing if they appear happy or not.  This idea was proposed earlier in the porject os no picture is available.  A number of particpants have brought up the role color could play in AI detecting threats, though other students fear that this could lead to prejudice due to humans having a wide range of skin colors.  Model training would need to be especially careful to have a waide range of subjects.  
             </p>
-            <img width="400" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FOUPD.png?alt=media&token=3ff196a4-5fc7-435d-890e-ff1773073cd6"></img>
+            <img width="400" ></img>
           </div>
         </div>
       </div>
