@@ -225,17 +225,6 @@ function App() {
     return months
   }
 
-
-
-
-
-
-
-
-
-
-
-
   function changeUsername() {
     setUsername(textInput.current.value)
 
@@ -264,6 +253,7 @@ function App() {
         {/* Side Bar */}
         <div className="sidebar">
           <h1 id="usernameHeader">@{username}</h1>
+
 
 
           

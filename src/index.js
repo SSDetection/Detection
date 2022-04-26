@@ -5,6 +5,7 @@ import App from './App';
 import Archive from './Archive'
 import Findings from './Findings'
 import Navigation from './Navigation';
+import Submit from './Submit';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -15,6 +16,7 @@ ReactDOM.render(
       <Route path="/" element={<App />} />
       <Route path="/archive" element={<Archive />} />
       <Route path="/findings" element={<Findings />} />
+      <Route path="/submit" element={<Submit />} />
     </Routes>
   </Router>,
   document.getElementById('root')
