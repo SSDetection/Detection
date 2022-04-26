@@ -12,6 +12,7 @@ function Findings() {
               alt=""
             />
           </div>
+
           <div >{/*class="col-lg-5"*/}
           <h1>Notable Values</h1>
            <p>
@@ -62,6 +63,7 @@ When asked who should have access to any alerts or data from a potential social 
             <strong>Culture Changes: </strong>More counselors, put the “Bible back in the home” one participant said–multiple participants felt that the issue could be fixed through improving the support system for students at schools.
             </p>
             <img width="400" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FOUPD.png?alt=media&token=3ff196a4-5fc7-435d-890e-ff1773073cd6"></img>
+
           </div>
         </div>
       </div>

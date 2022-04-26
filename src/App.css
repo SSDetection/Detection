@@ -105,6 +105,56 @@
   color:rgb(101, 101, 101)
 }
 
+.lightlightgreycard {
+  margin: 0 auto;
+  margin-bottom: 20%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  grid-auto-rows: auto;
+  gap: 20px;
+  font-family: sans-serif;
+  padding-top: 20px;
+  color: rgb(252, 252, 252)
+}
+
+.card__image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+  border-top: 2px solid #333333;
+  border-right: 2px solid #333333;
+  border-left: 2px solid #333333;
+}
+
+.lightgreybackcard {
+  background-color: rgb(54, 54, 54);
+  line-height: 1.5;
+  font-size: 0.9em;
+  padding: 15px;
+  padding-bottom: 1px;
+  border-right: 2px solid #333333;
+  border-left: 2px solid #333333;
+  background-color: rgb(71, 71, 71);
+  box-shadow: none;
+}
+
+.lightgreyback > p:first-of-type {
+  margin-top: 0;
+}
+
+.lightgreyback > p:last-of-type {
+  margin-bottom: 0;
+}
+
+.darkgreybackcard {
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(26, 26, 26);
+}
+
+
 .lightgreyback {
   background-color: rgb(54, 54, 54);
   box-shadow: none;
