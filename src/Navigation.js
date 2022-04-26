@@ -19,7 +19,9 @@ function Navigation() {
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" to="/">
-                  Our Artifact
+
+                  Example Artifact
+
                   <span className="sr-only">(current)</span>
                 </NavLink>
               </li>
