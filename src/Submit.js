@@ -3,13 +3,15 @@ import { getFirestore,  collection, getDocs, doc, setDoc, query, where  } from "
 import { initializeApp } from "firebase/app";
 
 async function clearBoxes() {
-    await setDoc(doc(archiveRef, "entry"), {
+    await setDoc(doc(archiveRef), {
         quote: false,
         picture: false, 
         what: document.getElementById("Text1").value, 
         who: document.getElementById("Text2").value, 
         why: document.getElementById("Text3").value, 
-        values: document.getElementById("Text4").value
+        values: document.getElementById("Text4").value,
+        header: "Possible Entries",
+        text: document.getElementById("Text1").value,
     });
     
     document.getElementById("Text1").value = " ";
@@ -17,6 +19,7 @@ async function clearBoxes() {
     document.getElementById("Text3").value = " ";
     document.getElementById("Text4").value = " ";
     document.getElementById("Text5").value = " ";
+    document.getElementById("congrats").textContent = "Thank you for submitting!";
 }
 
 const config = {
@@ -64,10 +67,11 @@ function Submit() {
             <strong>Values and Opinions: </strong>  </p>
             <textarea id="Text4" cols="80" rows="5"></textarea>
             <p>
-            <strong>Image URL: </strong>  </p>
+            <strong>Image URLs (include mutliple links for multiple pictures): </strong>  </p>
             <textarea id="Text5" cols="80" rows="1"></textarea>
             <p>
             <button className="white lightgreyback" onClick={() => {clearBoxes()}}>submit</button>
+            <p id="congrats" className="green"></p>
             <br></br>
             </p>
             <br></br>

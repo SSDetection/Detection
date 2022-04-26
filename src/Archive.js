@@ -432,7 +432,7 @@ function Archive() {
                           </div>
                           <div>
                           {(typeof picDict[quote] === 'undefined') ? (
-                            <p>Loading...</p>
+                            <p></p>
                           ) : (
                             picDict[quote].map((url, i) => (
                               <img src={url} className="grid-item paddingbottom" width="100%"></img>
