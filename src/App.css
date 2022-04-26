@@ -299,13 +299,5 @@
 
 .nomaxwidth {
   max-width: 100%;
-}
 
-.fulldisplay{
-  color: white;
-  width: auto;
-  /*max-height: 770px;*/
-  height:100vh;
-  overflow-y:auto;
-  background-color: rgb(26, 26, 26);
 }
