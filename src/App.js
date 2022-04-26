@@ -254,23 +254,6 @@ function App() {
         <div className="sidebar">
           <h1 id="usernameHeader">@{username}</h1>
 
-          <h2 className='interestColor'>
-            Interest Level: NULL
-          </h2>
-
-          <div className="sidebyside font10 negativepadding">
-
-            <ul>
-              <li>knives</li>
-              <li>guns</li>
-              <li>threatening speech</li>
-            </ul>
-            <ul>
-              <li>1 potential</li>
-              <li>2 potential</li>
-              <li>3 potential</li>
-            </ul>
-          </div>
 
 
           
@@ -313,15 +296,6 @@ function App() {
 
           )
           }
-
-          <div className="lightlightgrey">
-            <div className="lightgreyback">
-              <img className="card_image" src="https://firebasestorage.googleapis.com/v0/b/senior-capstone-8f433.appspot.com/o/OUrchivePics%2FBenPic.jpg?alt=media&token=ee326d9c-4674-4747-bc27-7f5033b40280" width="200" height="200"></img>
-              <p><font color="green">post.Caption</font></p>
-              <p>post.Date</p>
-              <p>Model Confidence: post.Accuracy%</p>
-            </div>
-          </div>
 
         </div>
       </div>
