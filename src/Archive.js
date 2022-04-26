@@ -372,7 +372,7 @@ function Archive() {
 
                 <br></br>
                 <input className="marginright" type="checkbox" id="technologistsCB" onClick={(e) => {updateQuery(e);}}></input>
-                <label for="technologistsCB"> Technologists</label>
+                <label for="technologistsCB"> Teachers</label>
 
                 {/*
                 <br></br>
